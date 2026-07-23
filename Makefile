@@ -6,25 +6,30 @@
 #    By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/07/20 15:06:44 by razevedo          #+#    #+#              #
-#    Updated: 2026/07/20 15:09:59 by razevedo         ###   ########.fr        #
+#    Updated: 2026/07/23 17:53:29 by razevedo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = codexion
 
-CFLAGS = -Wall -Wextra -Werror
+CC = cc
 
-SRC = main.c
+CFLAGS = -Wall -Wextra -Werror -Iinclude
 
-OBJ = $(SRC:.c=.o)
+SRC = src/main.c \
+	  src/parser.c \
+	  src/utils.c
+
+OBJ = $(patsubst src/%.c,obj/%.o,$(SRC))
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	gcc $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
-%.o: %.c
-	gcc $(CFLAGS) -c $< -o $@
+obj/%.o: src/%.c
+	@mkdir -p obj
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJ)
