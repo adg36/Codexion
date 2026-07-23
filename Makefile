@@ -6,7 +6,7 @@
 #    By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/07/20 15:06:44 by razevedo          #+#    #+#              #
-#    Updated: 2026/07/23 17:53:29 by razevedo         ###   ########.fr        #
+#    Updated: 2026/07/23 18:35:57 by razevedo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ OBJ = $(patsubst src/%.c,obj/%.o,$(SRC))
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)   // add -pthread
 
 obj/%.o: src/%.c
 	@mkdir -p obj

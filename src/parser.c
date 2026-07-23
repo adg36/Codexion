@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 17:18:40 by razevedo          #+#    #+#             */
-/*   Updated: 2026/07/23 17:54:30 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/07/23 18:08:08 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,19 @@ char	**get_args(int argc, char **argv)
 	return (args);
 }
 
-int are_args_valid(char **args, int len)
+int	are_args_valid(char **args, int len)
 {
 	if (has_invalid_numbers(args, len - 1))
 		return (0);
 	if (has_invalid_scheduler(args[7]))
-		return(0);
+		return (0);
 	return (1);
 }
 
-int has_invalid_numbers(char **args, int len)
+int	has_invalid_numbers(char **args, int len)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (i < len)
@@ -44,7 +44,7 @@ int has_invalid_numbers(char **args, int len)
 		while (args[i][j])
 		{
 			if (args[i][j] < '0' || args[i][j] > '9')
-			return (1);
+				return (1);
 			j++;
 		}
 		i++;
@@ -52,14 +52,13 @@ int has_invalid_numbers(char **args, int len)
 	return (0);
 }
 
-int has_invalid_scheduler(char *str)
+int	has_invalid_scheduler(char *str)
 {
 	char	*s1;
 	char	*s2;
 
 	s1 = "fifo";
 	s2 = "edf";
-
 	if (strcmp(str, s1) == 0)
 		return (0);
 	if (strcmp(str, s2) == 0)
