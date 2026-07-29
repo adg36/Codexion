@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+         #
+#    By: razevedo <razevedo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/07/20 15:06:44 by razevedo          #+#    #+#              #
-#    Updated: 2026/07/23 18:35:57 by razevedo         ###   ########.fr        #
+#    Updated: 2026/07/29 14:40:44 by razevedo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = codexion
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -Iinclude
+CFLAGS = -Wall -Wextra -Werror -Iinclude -pthread
 
 SRC = src/main.c \
 	  src/parser.c \
@@ -25,7 +25,7 @@ OBJ = $(patsubst src/%.c,obj/%.o,$(SRC))
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)   // add -pthread
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 obj/%.o: src/%.c
 	@mkdir -p obj
