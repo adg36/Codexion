@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 15:34:57 by razevedo          #+#    #+#             */
-/*   Updated: 2026/07/30 15:21:07 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/03 09:42:28 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,14 @@
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
+
+typedef struct
+{
+    int id;
+    int time_to_compile;
+    int time_to_debug;
+    int time_to_refactor;
+} Coder;
 
 char	    **get_args(int argc, char **argv);
 int		    are_args_valid(char **args, int len);
