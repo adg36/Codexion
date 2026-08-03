@@ -6,14 +6,17 @@
 /*   By: razevedo <razevedo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 15:21:35 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/03 14:26:32 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/03 15:18:06 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
+#include <bits/pthreadtypes.h>
+#include <complex.h>
 #include <pthread.h>
 
-Coder	thread_data_array[2];
+Coder				thread_data_array[2];
+pthread_mutex_t		mutex;
 
 void	*routine(void *threadarg)
 {
@@ -24,29 +27,62 @@ void	*routine(void *threadarg)
 	int					time_to_refactor;
 	struct timeval		start;
 	long				time_in_ms;
-
+	
 	my_data = (Coder *) threadarg;
 	taskid = my_data->id;
 	time_to_compile = my_data->time_to_compile;
 	time_to_debug = my_data->time_to_debug;
-	time_to_refactor = my_data->time_to_refactor;	
-
+	time_to_refactor = my_data->time_to_refactor;		
+	
 	gettimeofday(&start, NULL);
+
+	// lock dongles
+	pthread_mutex_lock(&mutex);
+	
 	time_in_ms = get_timestamp(start);
 	printf("%ld %d has taken a dongle.\n", time_in_ms, taskid);
 	time_in_ms = get_timestamp(start);
 	printf("%ld %d has taken a dongle.\n", time_in_ms, taskid);
-	time_in_ms = get_timestamp(start);
-	printf("%ld %d is compiling\n", time_in_ms, taskid);
-	usleep(time_to_compile * 1000);
-	time_in_ms = get_timestamp(start);
-	printf("%ld %d is debugging\n", time_in_ms, taskid);
-	usleep(time_to_debug * 1000);
-	time_in_ms = get_timestamp(start);
-	printf("%ld %d is refactoring\n", time_in_ms, taskid);
-	usleep(time_to_refactor * 1000);
+	compile(start, time_to_compile, taskid);
+
+	// unlock dongles
+	pthread_mutex_unlock(&mutex);
+	
+	// dongle cool down
+
+	// next coder may pick up the dongles
+	
+	debug(start, time_to_compile, taskid);
+	refactor(start, time_to_compile, taskid);
 	
 	return NULL;
+}
+
+void	compile(struct timeval start, int time_to_compile, int taskid)
+{
+	long	time_in_ms;
+
+	time_in_ms = get_timestamp(start);
+	printf("%ld %d is compiling\n", time_in_ms, taskid);
+	usleep(time_to_compile * 1000);	
+}
+
+void	debug(struct timeval start, int time_to_debug, int taskid)
+{
+	long	time_in_ms;
+
+	time_in_ms = get_timestamp(start);
+	printf("%ld %d is debugging\n", time_in_ms, taskid);
+	usleep(time_to_debug * 1000);	
+}
+
+void	refactor(struct timeval start, int time_to_refactor, int taskid)
+{
+	long	time_in_ms;
+
+	time_in_ms = get_timestamp(start);
+	printf("%ld %d is refactoring\n", time_in_ms, taskid);
+	usleep(time_to_refactor * 1000);	
 }
 
 int	main(int argc, char **argv)
@@ -87,6 +123,8 @@ int	main(int argc, char **argv)
 	}
 	*/
 
+	pthread_mutex_init(&mutex, NULL);
+	
 	thread_data_array[0].id = 1;
 	thread_data_array[1].id = 2;
 	thread_data_array[0].time_to_compile = time_to_compile;
@@ -105,6 +143,8 @@ int	main(int argc, char **argv)
 	pthread_join(thread2, NULL);
 	// complete_threads(number_of_coders, threads);
 	
+	pthread_mutex_destroy(&mutex);
+
 	return (0);
 }
 
