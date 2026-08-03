@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 15:34:57 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/03 09:42:28 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/03 14:21:57 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/time.h>
 # include <unistd.h>
 
 typedef struct
@@ -33,5 +34,6 @@ int		    has_invalid_numbers(char **args, int len);
 int		    has_invalid_scheduler(char *str);
 int		    array_len(char **arr);
 void    	create_coders(int number_of_coders);
+long	    get_timestamp(struct timeval start);
 
 #endif

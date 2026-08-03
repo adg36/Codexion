@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 15:21:35 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/03 09:37:01 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/03 14:26:32 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,33 @@ Coder	thread_data_array[2];
 
 void	*routine(void *threadarg)
 {
-	Coder	*my_data;
-	int		taskid;
-	int		time_to_compile;
-	int		time_to_debug;
-	int		time_to_refactor;
+	Coder				*my_data;
+	int					taskid;
+	int					time_to_compile;
+	int					time_to_debug;
+	int					time_to_refactor;
+	struct timeval		start;
+	long				time_in_ms;
 
 	my_data = (Coder *) threadarg;
 	taskid = my_data->id;
 	time_to_compile = my_data->time_to_compile;
 	time_to_debug = my_data->time_to_debug;
-	time_to_refactor = my_data->time_to_refactor;
-	
-	printf("[timestamp] %d has taken a dongle.\n", taskid);
-	printf("[timestamp] %d has taken a dongle.\n", taskid);
-	printf("%d is compiling\n", taskid);
+	time_to_refactor = my_data->time_to_refactor;	
+
+	gettimeofday(&start, NULL);
+	time_in_ms = get_timestamp(start);
+	printf("%ld %d has taken a dongle.\n", time_in_ms, taskid);
+	time_in_ms = get_timestamp(start);
+	printf("%ld %d has taken a dongle.\n", time_in_ms, taskid);
+	time_in_ms = get_timestamp(start);
+	printf("%ld %d is compiling\n", time_in_ms, taskid);
 	usleep(time_to_compile * 1000);
-	printf("%d is debugging\n", taskid);
+	time_in_ms = get_timestamp(start);
+	printf("%ld %d is debugging\n", time_in_ms, taskid);
 	usleep(time_to_debug * 1000);
-	printf("%d is refactoring\n", taskid);
+	time_in_ms = get_timestamp(start);
+	printf("%ld %d is refactoring\n", time_in_ms, taskid);
 	usleep(time_to_refactor * 1000);
 	
 	return NULL;
@@ -87,6 +95,7 @@ int	main(int argc, char **argv)
 	thread_data_array[1].time_to_debug = time_to_debug;
 	thread_data_array[0].time_to_refactor = time_to_refactor;
 	thread_data_array[1].time_to_refactor = time_to_refactor;
+	
 	pthread_create(&thread1, NULL, routine, (void *) &thread_data_array[0]);
 	pthread_create(&thread2, NULL, routine, (void *) &thread_data_array[1]);
 	
@@ -97,6 +106,23 @@ int	main(int argc, char **argv)
 	// complete_threads(number_of_coders, threads);
 	
 	return (0);
+}
+
+long	get_timestamp(struct timeval start)
+{
+	struct timeval		end;
+	long				seconds;
+	long				microseconds;
+	long				total_time;
+	long				time_in_ms;
+	
+	gettimeofday(&end, NULL);
+	seconds = end.tv_sec - start.tv_sec;
+	microseconds = end.tv_usec - start.tv_usec;
+	total_time = seconds * 1000000 + microseconds;
+	time_in_ms = total_time / 1000;
+
+	return time_in_ms;
 }
 
 void	create_coders(int number_of_coders)
