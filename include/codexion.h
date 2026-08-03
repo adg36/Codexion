@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 15:34:57 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/03 14:56:01 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/03 15:46:36 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct
     int time_to_compile;
     int time_to_debug;
     int time_to_refactor;
+    int number_of_compiles_required;
 } Coder;
 
 char	    **get_args(int argc, char **argv);

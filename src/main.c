@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 15:21:35 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/03 15:18:06 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/03 15:51:05 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,12 @@ pthread_mutex_t		mutex;
 void	*routine(void *threadarg)
 {
 	Coder				*my_data;
+	int					i;
 	int					taskid;
 	int					time_to_compile;
 	int					time_to_debug;
 	int					time_to_refactor;
+	int					number_of_compiles_required;
 	struct timeval		start;
 	long				time_in_ms;
 	
@@ -32,29 +34,35 @@ void	*routine(void *threadarg)
 	taskid = my_data->id;
 	time_to_compile = my_data->time_to_compile;
 	time_to_debug = my_data->time_to_debug;
-	time_to_refactor = my_data->time_to_refactor;		
+	time_to_refactor = my_data->time_to_refactor;
+	number_of_compiles_required = my_data->number_of_compiles_required;
 	
 	gettimeofday(&start, NULL);
 
-	// lock dongles
-	pthread_mutex_lock(&mutex);
+	i = 0;
 	
-	time_in_ms = get_timestamp(start);
-	printf("%ld %d has taken a dongle.\n", time_in_ms, taskid);
-	time_in_ms = get_timestamp(start);
-	printf("%ld %d has taken a dongle.\n", time_in_ms, taskid);
-	compile(start, time_to_compile, taskid);
+	while (i < number_of_compiles_required)
+	{
+		// lock dongles
+		pthread_mutex_lock(&mutex);
+		
+		time_in_ms = get_timestamp(start);
+		printf("%ld %d has taken a dongle.\n", time_in_ms, taskid);
+		time_in_ms = get_timestamp(start);
+		printf("%ld %d has taken a dongle.\n", time_in_ms, taskid);
+		compile(start, time_to_compile, taskid);
 
-	// unlock dongles
-	pthread_mutex_unlock(&mutex);
-	
-	// dongle cool down
+		// unlock dongles
+		pthread_mutex_unlock(&mutex);
+		
+		// dongle cool down
 
-	// next coder may pick up the dongles
-	
-	debug(start, time_to_compile, taskid);
-	refactor(start, time_to_compile, taskid);
-	
+		// next coder may pick up the dongles
+		
+		debug(start, time_to_compile, taskid);
+		refactor(start, time_to_compile, taskid);
+		i++;
+	}
 	return NULL;
 }
 
@@ -92,6 +100,7 @@ int	main(int argc, char **argv)
 	int			time_to_compile;
 	int			time_to_debug;
 	int			time_to_refactor;
+	int			number_of_compiles_required;
 	pthread_t	thread1;
 	pthread_t	thread2;
 
@@ -112,7 +121,8 @@ int	main(int argc, char **argv)
 	printf("Time to debug: %d\n", time_to_debug);
 	time_to_refactor = atoi(args[4]);
 	printf("Time to refactor: %d\n", time_to_refactor);
-	
+	number_of_compiles_required = atoi(args[5]);
+	printf("Number of compiles required: %d\n", number_of_compiles_required);	
 	/*
 	create_coders(number_of_coders);
 			
@@ -133,6 +143,8 @@ int	main(int argc, char **argv)
 	thread_data_array[1].time_to_debug = time_to_debug;
 	thread_data_array[0].time_to_refactor = time_to_refactor;
 	thread_data_array[1].time_to_refactor = time_to_refactor;
+	thread_data_array[0].number_of_compiles_required = number_of_compiles_required;
+	thread_data_array[1].number_of_compiles_required = number_of_compiles_required;	
 	
 	pthread_create(&thread1, NULL, routine, (void *) &thread_data_array[0]);
 	pthread_create(&thread2, NULL, routine, (void *) &thread_data_array[1]);
