@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 15:34:57 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/03 15:46:36 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/03 16:26:43 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,20 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-typedef struct
+typedef struct coder
 {
-    int id;
+    int coder_id;
     int time_to_compile;
     int time_to_debug;
     int time_to_refactor;
     int number_of_compiles_required;
-} Coder;
+} t_coder;
+
+typedef struct dongle
+{
+    int dongle_id;
+    int dongle_cooldown;
+} t_dongle;
 
 char	    **get_args(int argc, char **argv);
 int		    are_args_valid(char **args, int len);

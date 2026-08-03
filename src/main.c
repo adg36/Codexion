@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 15:21:35 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/03 15:51:05 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/03 16:27:14 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 #include <complex.h>
 #include <pthread.h>
 
-Coder				thread_data_array[2];
+t_coder				thread_data_array[2];
 pthread_mutex_t		mutex;
 
 void	*routine(void *threadarg)
 {
-	Coder				*my_data;
+	t_coder				*my_data;
 	int					i;
 	int					taskid;
 	int					time_to_compile;
@@ -30,13 +30,13 @@ void	*routine(void *threadarg)
 	struct timeval		start;
 	long				time_in_ms;
 	
-	my_data = (Coder *) threadarg;
-	taskid = my_data->id;
+	my_data = (t_coder *) threadarg;
+	taskid = my_data->coder_id;
 	time_to_compile = my_data->time_to_compile;
 	time_to_debug = my_data->time_to_debug;
 	time_to_refactor = my_data->time_to_refactor;
 	number_of_compiles_required = my_data->number_of_compiles_required;
-	
+
 	gettimeofday(&start, NULL);
 
 	i = 0;
@@ -51,12 +51,13 @@ void	*routine(void *threadarg)
 		time_in_ms = get_timestamp(start);
 		printf("%ld %d has taken a dongle.\n", time_in_ms, taskid);
 		compile(start, time_to_compile, taskid);
-
+		
+		// dongle cooldown (NOTE: it does not belong here)
+		// it needs to affect only the dongle, not the coder
+			
 		// unlock dongles
 		pthread_mutex_unlock(&mutex);
 		
-		// dongle cool down
-
 		// next coder may pick up the dongles
 		
 		debug(start, time_to_compile, taskid);
@@ -101,6 +102,7 @@ int	main(int argc, char **argv)
 	int			time_to_debug;
 	int			time_to_refactor;
 	int			number_of_compiles_required;
+	int			dongle_cooldown;
 	pthread_t	thread1;
 	pthread_t	thread2;
 
@@ -123,6 +125,7 @@ int	main(int argc, char **argv)
 	printf("Time to refactor: %d\n", time_to_refactor);
 	number_of_compiles_required = atoi(args[5]);
 	printf("Number of compiles required: %d\n", number_of_compiles_required);	
+	dongle_cooldown = atoi(args[6]);
 	/*
 	create_coders(number_of_coders);
 			
@@ -135,8 +138,8 @@ int	main(int argc, char **argv)
 
 	pthread_mutex_init(&mutex, NULL);
 	
-	thread_data_array[0].id = 1;
-	thread_data_array[1].id = 2;
+	thread_data_array[0].coder_id = 1;
+	thread_data_array[1].coder_id = 2;
 	thread_data_array[0].time_to_compile = time_to_compile;
 	thread_data_array[1].time_to_compile = time_to_compile;
 	thread_data_array[0].time_to_debug = time_to_debug;
