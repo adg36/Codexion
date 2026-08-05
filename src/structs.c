@@ -6,12 +6,13 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/05 12:12:42 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/05 14:42:47 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "codexion.h"
 #include <bits/types/struct_timeval.h>
+#include <pthread.h>
 
 void	init_settings(t_settings *settings, char **args)
 {
@@ -33,34 +34,28 @@ void	init_settings(t_settings *settings, char **args)
 	printf("Scheduler: %s\n", settings->scheduler);
 }
 
-void	init_coders(t_coder *coders, t_settings settings)
+void	init_coders(t_coder *coders, t_settings *settings)
 {
 	int	i;
 
-	coders = malloc(sizeof(t_coder) * settings.number_of_coders);
+	coders = malloc(sizeof(t_coder) * settings->number_of_coders);
 
 	if (!coders)
-		return (0);
+		return ;
 
 	i = 0;
-	while (i < settings.number_of_coders)
+	while (i < settings->number_of_coders)
 	{
-		coders_data[i].coder_id = i + 1;
-		coders_data[i].time_to_compile = settings.time_to_compile;
-		coders_data[i].time_to_debug = settings.time_to_debug;
-		coders_data[i].time_to_refactor = settings.time_to_refactor;
-		coders_data[i].number_of_compiles_required = settings.number_of_compiles_required;
+		coders[i].coder_id = i + 1;
+		i++;
 	}
-	printf("%d coders (structs) created\n", settings.number_of_coders);
+	printf("%d coders (structs) created\n", settings->number_of_coders);
 }
 
-void	init_simulation(t_simulation simulation)
+void	init_simulation(t_simulation *simulation)
 {
-	struct timeval		start;
-	pthread_mutex_t		mutex_dongles;
+	gettimeofday(&simulation->start, NULL);
+	simulation->threads = NULL;
 
-	simulation->start_time = gettimeofday(&start, NULL);
-	simulation->mutex_dongles = mutex_dongles;
-
-	printf("Start of the simulation at %ld\n", simulation->start_time);
+	printf("Start of the simulation at %ld\n", (long)simulation->start.tv_sec);
 }

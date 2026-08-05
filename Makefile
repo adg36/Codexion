@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: razevedo <razevedo@student.42.fr>          +#+  +:+       +#+         #
+#    By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/07/20 15:06:44 by razevedo          #+#    #+#              #
-#    Updated: 2026/07/29 14:40:44 by razevedo         ###   ########.fr        #
+#    Updated: 2026/08/05 14:47:50 by razevedo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,11 +18,17 @@ CFLAGS = -Wall -Wextra -Werror -Iinclude -pthread
 
 SRC = src/main.c \
 	  src/parser.c \
+	  src/routine.c \
+	  src/structs.c \
+	  src/time.c \
 	  src/utils.c
 
 OBJ = $(patsubst src/%.c,obj/%.o,$(SRC))
 
 all: $(NAME)
+
+debug: CFLAGS += -g
+debug: re
 
 $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
@@ -34,7 +40,7 @@ obj/%.o: src/%.c
 clean:
 	rm -f $(OBJ)
 
-fclean:
+fclean: clean
 	rm -f $(NAME)
 
 re: fclean all

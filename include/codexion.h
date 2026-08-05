@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/05 12:13:31 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/05 14:31:25 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,27 +33,25 @@ typedef struct s_settings
 	char	*scheduler;
 }	t_settings;
 
+typedef struct s_coder
+{
+	int	coder_id;
+}	t_coder;
+
 typedef struct s_simulation
 {
 	t_settings 		settings;
 	pthread_mutex_t	mutex_dongles;
 	pthread_t		*threads;
-	struct timeval	start_time;
+	struct timeval	start;
+	t_coder			*coders;
 }	t_simulation;
-
-typedef struct s_coder
-{
-	int	coder_id;
-	int	time_to_compile;
-	int	time_to_debug;
-	int	time_to_refactor;
-	int	number_of_compiles_required;
-}	t_coder;
 
 typedef struct s_dongle
 {
 	int	dongle_id;
 	int	dongle_cooldown;
+	int	is_available;
 }	t_dongle;
 
 char	**get_args(int argc, char **argv);
@@ -61,7 +59,8 @@ int		are_args_valid(char **args, int len);
 int		has_invalid_numbers(char **args, int len);
 int		has_invalid_scheduler(char *str);
 int		array_len(char **arr);
-void	create_coders(t_settings *settings);
+void	create_threads(t_settings *settings, t_simulation *simulation);
+void	join_threads(t_settings *settings, t_simulation *simulation);
 long	get_timestamp(struct timeval start);
 void	compile(struct timeval start, int time_to_compile, int taskid);
 void	debug(struct timeval start, int time_to_debug, int taskid);
@@ -69,6 +68,6 @@ void	refactor(struct timeval start, int time_to_refactor, int taskid);
 void	init_settings(t_settings *settings, char **args);
 void	init_coders(t_coder *coders, t_settings *settings);
 void	init_simulation(t_simulation *simulation);
-void	join_threads(t_settings *settings, pthread_t *threads);
+void	*routine(void *threadarg);
 
 #endif
