@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:33 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/05 08:53:34 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/05 10:20:39 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,15 +65,3 @@ int	has_invalid_scheduler(char *str)
 		return (0);
 	return (1);
 }
-
-// check INT_MIN and INT_MAX??
-
-// maybe an extract_args function instead, which extracts directly each argument to the corresponding variable name:
-// number_of_coders
-// time_to_burnout (in milliseconds)
-// time_to_compile (in milliseconds)
-// time_to_debug (in milliseconds)
-// time_to_refactor (in milliseconds)
-// number_of_compiles_required
-// dongle_cooldown (in milliseconds)
-// scheduler (must be either fifo or edf)
