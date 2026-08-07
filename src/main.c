@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/05 14:37:11 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/07 13:26:51 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 #include <complex.h>
 #include <pthread.h>
 #include <sys/types.h>
-
-// t_coder				thread_data_array[2];
 
 int	main(int argc, char **argv)
 {
@@ -35,18 +33,14 @@ int	main(int argc, char **argv)
 		return (0);
 	}
 	init_settings(&settings, args);
-	init_coders(coders, &settings);
-	init_simulation(&simulation);
+	coders = init_coders(coders, &settings);
+	init_simulation(&simulation, &settings, coders);
 
 	pthread_mutex_init(&simulation.mutex_dongles, NULL);
 
 	create_threads(&settings, &simulation);
-	// pthread_create(&thread1, NULL, routine, (void *) &thread_data_array[0]);
-	// pthread_create(&thread2, NULL, routine, (void *) &thread_data_array[1]);
 
 	join_threads(&settings, &simulation);
-	//pthread_join(thread1, NULL);
-	//pthread_join(thread2, NULL);
 
 	pthread_mutex_destroy(&simulation.mutex_dongles);
 
@@ -63,7 +57,7 @@ void	create_threads(t_settings *settings, t_simulation *simulation)
 	i = 0;
 	while (i < settings->number_of_coders)
 	{
-		if (pthread_create(&simulation->threads[i], NULL, routine, (void *) &simulation) != 0)
+		if (pthread_create(&simulation->threads[i], NULL, routine, (void *) simulation) != 0)
 			fprintf(stderr, "Error creating thread %d\n", i);
 		i++;
 	}
@@ -81,6 +75,6 @@ void	join_threads(t_settings *settings, t_simulation *simulation)
 			fprintf(stderr, "Error joining thread %d\n", i);
 		i++;
 	}
-	printf("%d threads joined\n", settings->number_of_coders);
+	printf("%d threads finished\n", settings->number_of_coders);
 }
 

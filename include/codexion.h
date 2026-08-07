@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/05 14:31:25 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/07 13:26:21 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,9 @@ typedef struct s_simulation
 {
 	t_settings 		settings;
 	pthread_mutex_t	mutex_dongles;
-	pthread_t		*threads;
+	pthread_t		*threads;   // [thread0, thread1, etc.]
 	struct timeval	start;
-	t_coder			*coders;
+	t_coder			*coders;    // [coder1, coder2, etc.]
 }	t_simulation;
 
 typedef struct s_dongle
@@ -66,8 +66,8 @@ void	compile(struct timeval start, int time_to_compile, int taskid);
 void	debug(struct timeval start, int time_to_debug, int taskid);
 void	refactor(struct timeval start, int time_to_refactor, int taskid);
 void	init_settings(t_settings *settings, char **args);
-void	init_coders(t_coder *coders, t_settings *settings);
-void	init_simulation(t_simulation *simulation);
+t_coder	*init_coders(t_coder *coders, t_settings *settings);
+void	init_simulation(t_simulation *simulation, t_settings *settings, t_coder *coders);
 void	*routine(void *threadarg);
 
 #endif

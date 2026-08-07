@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/05 14:42:47 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/07 11:06:51 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,14 @@ void	init_settings(t_settings *settings, char **args)
 	printf("Scheduler: %s\n", settings->scheduler);
 }
 
-void	init_coders(t_coder *coders, t_settings *settings)
+t_coder	*init_coders(t_coder *coders, t_settings *settings)
 {
 	int	i;
 
 	coders = malloc(sizeof(t_coder) * settings->number_of_coders);
 
 	if (!coders)
-		return ;
+		return NULL;
 
 	i = 0;
 	while (i < settings->number_of_coders)
@@ -50,12 +50,15 @@ void	init_coders(t_coder *coders, t_settings *settings)
 		i++;
 	}
 	printf("%d coders (structs) created\n", settings->number_of_coders);
+	return coders;
 }
 
-void	init_simulation(t_simulation *simulation)
+void	init_simulation(t_simulation *simulation, t_settings *settings, t_coder *coders)
 {
 	gettimeofday(&simulation->start, NULL);
 	simulation->threads = NULL;
+	simulation->settings = *settings;
+	simulation->coders = coders;
 
 	printf("Start of the simulation at %ld\n", (long)simulation->start.tv_sec);
 }
