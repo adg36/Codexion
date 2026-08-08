@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/08 11:40:22 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/08 18:30:43 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings)
 	i = 0;
 	while (i < settings->number_of_coders)
 	{
-		coders[i].coder_id = i + 1;
+		coders[i].id = i + 1;
 		i++;
 	}
 	printf("%d coders (structs) created\n", settings->number_of_coders);

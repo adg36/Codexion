@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:16:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/08 11:43:02 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/08 18:00:12 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,17 @@ void	*routine(void *threadarg)
 		printf("Beginning of routine loop %d.\n", i);
 		pthread_mutex_lock(&sim_data->mutex_dongles);
 		time_in_ms = get_timestamp(sim_data->start);
-		printf("%ld %d has taken a dongle.\n", time_in_ms, sim_data->coders[i].coder_id);
+		printf("%ld %d has taken a dongle.\n", time_in_ms, sim_data->coders[i].id);
 		time_in_ms = get_timestamp(sim_data->start);
-		printf("%ld %d has taken a dongle.\n", time_in_ms, sim_data->coders[i].coder_id);
-		compile(sim_data->start, sim_data->settings.time_to_compile, sim_data->coders[i].coder_id);
+		printf("%ld %d has taken a dongle.\n", time_in_ms, sim_data->coders[i].id);
+		compile(sim_data->start, sim_data->settings.time_to_compile, sim_data->coders[i].id);
 
 		// dongle cooldown (NOTE: it does not belong here)
 		// it needs to affect only the dongle, not the coder
 
 		pthread_mutex_unlock(&sim_data->mutex_dongles);
-		debug(sim_data->start, sim_data->settings.time_to_debug, sim_data->coders->coder_id);
-		refactor(sim_data->start, sim_data->settings.time_to_refactor, sim_data->coders->coder_id);
+		debug(sim_data->start, sim_data->settings.time_to_debug, sim_data->coders->id);
+		refactor(sim_data->start, sim_data->settings.time_to_refactor, sim_data->coders->id);
 		printf("End of one routine loop %d.\n", i);
 		i++;
 	}

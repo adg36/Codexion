@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/08 11:37:36 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/08 18:30:19 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ typedef struct s_settings
 
 typedef struct s_coder
 {
-	int	coder_id;
+	int					id;
+	struct t_simulation *sim_data;
 }	t_coder;
 
 typedef struct s_simulation
@@ -49,8 +50,8 @@ typedef struct s_simulation
 
 typedef struct s_dongle
 {
-	int	dongle_id;
-	int	dongle_cooldown;
+	int	id;
+	int	cooldown;
 	int	is_available;
 }	t_dongle;
 
