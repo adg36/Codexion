@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/07 13:26:51 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/08 11:38:00 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	main(int argc, char **argv)
 	}
 	init_settings(&settings, args);
 	coders = init_coders(coders, &settings);
-	init_simulation(&simulation, &settings, coders);
+	init_sim(&simulation, &settings, coders);
 
 	pthread_mutex_init(&simulation.mutex_dongles, NULL);
 
@@ -71,7 +71,7 @@ void	join_threads(t_settings *settings, t_simulation *simulation)
 	i = 0;
 	while (i < settings->number_of_coders)
 	{
-		if(pthread_join(simulation->threads[i], NULL) != 0)
+		if (pthread_join(simulation->threads[i], NULL) != 0)
 			fprintf(stderr, "Error joining thread %d\n", i);
 		i++;
 	}

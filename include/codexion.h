@@ -6,14 +6,14 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/07 13:26:21 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/08 11:37:36 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CODEXION_H
 # define CODEXION_H
 
-#include <bits/types/struct_timeval.h>
+# include <bits/types/struct_timeval.h>
 # include <pthread.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -40,11 +40,11 @@ typedef struct s_coder
 
 typedef struct s_simulation
 {
-	t_settings 		settings;
+	t_settings		settings;
 	pthread_mutex_t	mutex_dongles;
-	pthread_t		*threads;   // [thread0, thread1, etc.]
+	pthread_t		*threads; // [thread0, thread1, etc.]
 	struct timeval	start;
-	t_coder			*coders;    // [coder1, coder2, etc.]
+	t_coder			*coders; // [coder1, coder2, etc.]
 }	t_simulation;
 
 typedef struct s_dongle
@@ -67,7 +67,7 @@ void	debug(struct timeval start, int time_to_debug, int taskid);
 void	refactor(struct timeval start, int time_to_refactor, int taskid);
 void	init_settings(t_settings *settings, char **args);
 t_coder	*init_coders(t_coder *coders, t_settings *settings);
-void	init_simulation(t_simulation *simulation, t_settings *settings, t_coder *coders);
+void	init_sim(t_simulation *sim, t_settings *settings, t_coder *coders);
 void	*routine(void *threadarg);
 
 #endif

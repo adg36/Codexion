@@ -6,11 +6,11 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/07 11:06:51 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/08 11:40:22 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "codexion.h"
+#include "codexion.h"
 #include <bits/types/struct_timeval.h>
 #include <pthread.h>
 
@@ -41,7 +41,7 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings)
 	coders = malloc(sizeof(t_coder) * settings->number_of_coders);
 
 	if (!coders)
-		return NULL;
+		return (NULL);
 
 	i = 0;
 	while (i < settings->number_of_coders)
@@ -50,15 +50,15 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings)
 		i++;
 	}
 	printf("%d coders (structs) created\n", settings->number_of_coders);
-	return coders;
+	return (coders);
 }
 
-void	init_simulation(t_simulation *simulation, t_settings *settings, t_coder *coders)
+void	init_sim(t_simulation *sim, t_settings *settings, t_coder *coders)
 {
-	gettimeofday(&simulation->start, NULL);
-	simulation->threads = NULL;
-	simulation->settings = *settings;
-	simulation->coders = coders;
+	gettimeofday(&sim->start, NULL);
+	sim->threads = NULL;
+	sim->settings = *settings;
+	sim->coders = coders;
 
-	printf("Start of the simulation at %ld\n", (long)simulation->start.tv_sec);
+	printf("Start of the simulation at %ld\n", (long)sim->start.tv_sec);
 }
