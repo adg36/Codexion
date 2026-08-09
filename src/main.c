@@ -33,12 +33,12 @@ int	main(int argc, char **argv)
 		return (0);
 	}
 	init_settings(&settings, args);
-	coders = init_coders(coders, &settings);
+	coders = init_coders(coders, &settings, &simulation);
 	init_sim(&simulation, &settings, coders);
 
 	pthread_mutex_init(&simulation.mutex_dongles, NULL);
 
-	create_threads(&settings, &simulation);
+	create_threads(&settings, &simulation, coders);
 
 	join_threads(&settings, &simulation);
 
@@ -47,7 +47,7 @@ int	main(int argc, char **argv)
 	return (0);
 }
 
-void	create_threads(t_settings *settings, t_simulation *simulation)
+void	create_threads(t_settings *settings, t_simulation *simulation, t_coder *coders)
 {
 	int			i;
 
@@ -57,7 +57,7 @@ void	create_threads(t_settings *settings, t_simulation *simulation)
 	i = 0;
 	while (i < settings->number_of_coders)
 	{
-		if (pthread_create(&simulation->threads[i], NULL, routine, (void *) simulation) != 0)
+		if (pthread_create(&simulation->threads[i], NULL, routine, (void *) &coders[i]) != 0)
 			fprintf(stderr, "Error creating thread %d\n", i);
 		i++;
 	}

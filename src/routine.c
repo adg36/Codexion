@@ -14,28 +14,28 @@
 
 void	*routine(void *threadarg)
 {
-	t_simulation	*sim_data;
-	int				i;
-	long			time_in_ms;
+	t_coder	*coder_data;
+	int		i;
+	long	time_in_ms;
 
-	sim_data = (t_simulation *) threadarg;
+	coder_data = (t_coder *) threadarg;
 	i = 0;
-	while (i < sim_data->settings.number_of_compiles_required)
+	while (i < coder_data->sim_data->settings.number_of_compiles_required)
 	{
 		printf("Beginning of routine loop %d.\n", i);
-		pthread_mutex_lock(&sim_data->mutex_dongles);
-		time_in_ms = get_timestamp(sim_data->start);
-		printf("%ld %d has taken a dongle.\n", time_in_ms, sim_data->coders[i].id);
-		time_in_ms = get_timestamp(sim_data->start);
-		printf("%ld %d has taken a dongle.\n", time_in_ms, sim_data->coders[i].id);
-		compile(sim_data->start, sim_data->settings.time_to_compile, sim_data->coders[i].id);
+		pthread_mutex_lock(&coder_data->sim_data->mutex_dongles);
+		time_in_ms = get_timestamp(coder_data->sim_data->start);
+		printf("%ld %d has taken a dongle.\n", time_in_ms, coder_data->id);
+		time_in_ms = get_timestamp(coder_data->sim_data->start);
+		printf("%ld %d has taken a dongle.\n", time_in_ms, coder_data->id);
+		compile(coder_data->sim_data->start, coder_data->sim_data->settings.time_to_compile, coder_data->id);
 
 		// dongle cooldown (NOTE: it does not belong here)
 		// it needs to affect only the dongle, not the coder
 
-		pthread_mutex_unlock(&sim_data->mutex_dongles);
-		debug(sim_data->start, sim_data->settings.time_to_debug, sim_data->coders->id);
-		refactor(sim_data->start, sim_data->settings.time_to_refactor, sim_data->coders->id);
+		pthread_mutex_unlock(&coder_data->sim_data->mutex_dongles);
+		debug(coder_data->sim_data->start, coder_data->sim_data->settings.time_to_debug, coder_data->id);
+		refactor(coder_data->sim_data->start, coder_data->sim_data->settings.time_to_refactor, coder_data->id);
 		printf("End of one routine loop %d.\n", i);
 		i++;
 	}

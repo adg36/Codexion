@@ -34,7 +34,7 @@ void	init_settings(t_settings *settings, char **args)
 	printf("Scheduler: %s\n", settings->scheduler);
 }
 
-t_coder	*init_coders(t_coder *coders, t_settings *settings)
+t_coder	*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation)
 {
 	int	i;
 
@@ -47,6 +47,7 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings)
 	while (i < settings->number_of_coders)
 	{
 		coders[i].id = i + 1;
+		coders[i].sim_data = simulation;
 		i++;
 	}
 	printf("%d coders (structs) created\n", settings->number_of_coders);

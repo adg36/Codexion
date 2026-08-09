@@ -21,6 +21,8 @@
 # include <sys/time.h>
 # include <unistd.h>
 
+typedef struct s_simulation t_simulation;
+
 typedef struct s_settings
 {
 	int		number_of_coders;
@@ -36,7 +38,7 @@ typedef struct s_settings
 typedef struct s_coder
 {
 	int					id;
-	struct t_simulation *sim_data;
+	t_simulation *sim_data;
 }	t_coder;
 
 typedef struct s_simulation
@@ -60,14 +62,14 @@ int		are_args_valid(char **args, int len);
 int		has_invalid_numbers(char **args, int len);
 int		has_invalid_scheduler(char *str);
 int		array_len(char **arr);
-void	create_threads(t_settings *settings, t_simulation *simulation);
+void	create_threads(t_settings *settings, t_simulation *simulation, t_coder *coders);
 void	join_threads(t_settings *settings, t_simulation *simulation);
 long	get_timestamp(struct timeval start);
 void	compile(struct timeval start, int time_to_compile, int taskid);
 void	debug(struct timeval start, int time_to_debug, int taskid);
 void	refactor(struct timeval start, int time_to_refactor, int taskid);
 void	init_settings(t_settings *settings, char **args);
-t_coder	*init_coders(t_coder *coders, t_settings *settings);
+t_coder	*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation);
 void	init_sim(t_simulation *sim, t_settings *settings, t_coder *coders);
 void	*routine(void *threadarg);
 
