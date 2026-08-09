@@ -22,8 +22,10 @@ int	main(int argc, char **argv)
 	t_settings		settings;
 	t_simulation	simulation;
 	t_coder			*coders;
+	t_dongle		*dongles;
 
 	coders = NULL;
+	dongles = NULL;
 	args = get_args(argc, argv);
 	if (!args)
 		return (0);
@@ -34,7 +36,8 @@ int	main(int argc, char **argv)
 	}
 	init_settings(&settings, args);
 	coders = init_coders(coders, &settings, &simulation);
-	init_sim(&simulation, &settings, coders);
+	dongles = init_dongles(dongles, &settings);
+	init_sim(&simulation, &settings, coders, dongles);
 
 	pthread_mutex_init(&simulation.mutex_dongles, NULL);
 

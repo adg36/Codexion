@@ -41,36 +41,38 @@ typedef struct s_coder
 	t_simulation *sim_data;
 }	t_coder;
 
+typedef struct s_dongle
+{
+	int	id;
+	int	is_available;
+	int	began_cooldown;
+}	t_dongle;
+
 typedef struct s_simulation
 {
 	t_settings		settings;
 	pthread_mutex_t	mutex_dongles;
-	pthread_t		*threads; // [thread0, thread1, etc.]
+	t_dongle		*dongles; // [dongle1, dongle2, etc.]
+	pthread_t		*threads; // [thread1, thread2, etc.]
 	struct timeval	start;
 	t_coder			*coders; // [coder1, coder2, etc.]
 }	t_simulation;
 
-typedef struct s_dongle
-{
-	int	id;
-	int	cooldown;
-	int	is_available;
-}	t_dongle;
-
-char	**get_args(int argc, char **argv);
-int		are_args_valid(char **args, int len);
-int		has_invalid_numbers(char **args, int len);
-int		has_invalid_scheduler(char *str);
-int		array_len(char **arr);
-void	create_threads(t_settings *settings, t_simulation *simulation, t_coder *coders);
-void	join_threads(t_settings *settings, t_simulation *simulation);
-long	get_timestamp(struct timeval start);
-void	compile(struct timeval start, int time_to_compile, int taskid);
-void	debug(struct timeval start, int time_to_debug, int taskid);
-void	refactor(struct timeval start, int time_to_refactor, int taskid);
-void	init_settings(t_settings *settings, char **args);
-t_coder	*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation);
-void	init_sim(t_simulation *sim, t_settings *settings, t_coder *coders);
-void	*routine(void *threadarg);
+char		**get_args(int argc, char **argv);
+int			are_args_valid(char **args, int len);
+int			has_invalid_numbers(char **args, int len);
+int			has_invalid_scheduler(char *str);
+int			array_len(char **arr);
+void		create_threads(t_settings *settings, t_simulation *simulation, t_coder *coders);
+void		join_threads(t_settings *settings, t_simulation *simulation);
+long		get_timestamp(struct timeval start);
+void		compile(struct timeval start, int time_to_compile, int taskid);
+void		debug(struct timeval start, int time_to_debug, int taskid);
+void		refactor(struct timeval start, int time_to_refactor, int taskid);
+void		init_settings(t_settings *settings, char **args);
+t_coder		*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation);
+t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings);
+void		init_sim(t_simulation *sim, t_settings *settings, t_coder *coders, t_dongle *dongles);
+void		*routine(void *threadarg);
 
 #endif

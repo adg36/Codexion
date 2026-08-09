@@ -54,12 +54,34 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings, t_simulation *simula
 	return (coders);
 }
 
-void	init_sim(t_simulation *sim, t_settings *settings, t_coder *coders)
+t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
+{
+	int	i;
+
+	dongles = malloc(sizeof(t_dongle) * settings->number_of_coders);
+
+	if (!dongles)
+		return (NULL);
+
+	i = 0;
+	while (i < settings->number_of_coders)
+	{
+		dongles[i].id = i + 1;
+		dongles[i].is_available = 1;
+		dongles[i].began_cooldown = 0;
+		i++;
+	}
+	printf("%d dongles created\n", settings->number_of_coders);
+	return (dongles);
+}
+
+void	init_sim(t_simulation *sim, t_settings *settings, t_coder *coders, t_dongle *dongles)
 {
 	gettimeofday(&sim->start, NULL);
 	sim->threads = NULL;
 	sim->settings = *settings;
 	sim->coders = coders;
+	sim->dongles = dongles;
 
 	printf("Start of the simulation at %ld\n", (long)sim->start.tv_sec);
 }
