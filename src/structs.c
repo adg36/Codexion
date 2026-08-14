@@ -34,26 +34,6 @@ void	init_settings(t_settings *settings, char **args)
 	printf("Scheduler: %s\n", settings->scheduler);
 }
 
-t_coder	*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation)
-{
-	int	i;
-
-	coders = malloc(sizeof(t_coder) * settings->number_of_coders);
-
-	if (!coders)
-		return (NULL);
-
-	i = 0;
-	while (i < settings->number_of_coders)
-	{
-		coders[i].id = i + 1;
-		coders[i].sim_data = simulation;
-		i++;
-	}
-	printf("%d coders (structs) created\n", settings->number_of_coders);
-	return (coders);
-}
-
 t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
 {
 	int	i;
@@ -73,6 +53,28 @@ t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
 	}
 	printf("%d dongles created\n", settings->number_of_coders);
 	return (dongles);
+}
+
+t_coder	*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation, t_dongle *dongles)
+{
+	int	i;
+
+	coders = malloc(sizeof(t_coder) * settings->number_of_coders);
+
+	if (!coders)
+		return (NULL);
+
+	i = 0;
+	while (i < settings->number_of_coders)
+	{
+		coders[i].id = i + 1;
+		coders[i].sim_data = simulation;
+		coders[i].dongle_left = dongles[i];
+		coders[i].dongle_right = dongles[(i + 1) % settings->number_of_coders];
+		i++;
+	}
+	printf("%d coders (structs) created\n", settings->number_of_coders);
+	return (coders);
 }
 
 void	init_sim(t_simulation *sim, t_settings *settings, t_coder *coders, t_dongle *dongles)

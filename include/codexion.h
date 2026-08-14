@@ -35,18 +35,20 @@ typedef struct s_settings
 	char	*scheduler;
 }	t_settings;
 
-typedef struct s_coder
-{
-	int					id;
-	t_simulation *sim_data;
-}	t_coder;
-
 typedef struct s_dongle
 {
 	int	id;
 	int	is_available;
 	int	began_cooldown;
 }	t_dongle;
+
+typedef struct s_coder
+{
+	int					id;
+	t_simulation *sim_data;
+	t_dongle	 dongle_left;
+	t_dongle	 dongle_right;
+}	t_coder;
 
 typedef struct s_simulation
 {
@@ -66,11 +68,12 @@ int			array_len(char **arr);
 void		create_threads(t_settings *settings, t_simulation *simulation, t_coder *coders);
 void		join_threads(t_settings *settings, t_simulation *simulation);
 long		get_timestamp(struct timeval start);
-void		compile(struct timeval start, int time_to_compile, int taskid);
-void		debug(struct timeval start, int time_to_debug, int taskid);
-void		refactor(struct timeval start, int time_to_refactor, int taskid);
+void		get_dongles(struct timeval start, t_coder *coder_data);
+void		compile(struct timeval start, int time_to_compile, int coder_id);
+void		debug(struct timeval start, int time_to_debug, int coder_id);
+void		refactor(struct timeval start, int time_to_refactor, int coder_id);
 void		init_settings(t_settings *settings, char **args);
-t_coder		*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation);
+t_coder		*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation, t_dongle *dongles);
 t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings);
 void		init_sim(t_simulation *sim, t_settings *settings, t_coder *coders, t_dongle *dongles);
 void		*routine(void *threadarg);
