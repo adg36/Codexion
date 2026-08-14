@@ -39,6 +39,7 @@ typedef struct s_dongle
 {
 	int	id;
 	int	is_available;
+	int	held_by;
 	int	began_cooldown;
 }	t_dongle;
 
@@ -46,8 +47,8 @@ typedef struct s_coder
 {
 	int					id;
 	t_simulation *sim_data;
-	t_dongle	 dongle_left;
-	t_dongle	 dongle_right;
+	t_dongle	 *dongle_left;
+	t_dongle	 *dongle_right;
 }	t_coder;
 
 typedef struct s_simulation
@@ -69,7 +70,8 @@ void		create_threads(t_settings *settings, t_simulation *simulation, t_coder *co
 void		join_threads(t_settings *settings, t_simulation *simulation);
 long		get_timestamp(struct timeval start);
 void		get_dongles(struct timeval start, t_coder *coder_data);
-void		compile(struct timeval start, int time_to_compile, int coder_id);
+void		compile(t_coder *coder_data);
+void		release_dongles(struct timeval start, t_coder *coder_data);
 void		debug(struct timeval start, int time_to_debug, int coder_id);
 void		refactor(struct timeval start, int time_to_refactor, int coder_id);
 void		init_settings(t_settings *settings, char **args);

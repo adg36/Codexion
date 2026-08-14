@@ -48,6 +48,7 @@ t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
 	{
 		dongles[i].id = i + 1;
 		dongles[i].is_available = 1;
+		dongles[i].held_by = 0;
 		dongles[i].began_cooldown = 0;
 		i++;
 	}
@@ -69,8 +70,8 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings, t_simulation *simula
 	{
 		coders[i].id = i + 1;
 		coders[i].sim_data = simulation;
-		coders[i].dongle_left = dongles[i];
-		coders[i].dongle_right = dongles[(i + 1) % settings->number_of_coders];
+		coders[i].dongle_left = &(dongles[i]);
+		coders[i].dongle_right = &(dongles[(i + 1) % settings->number_of_coders]);
 		i++;
 	}
 	printf("%d coders (structs) created\n", settings->number_of_coders);
