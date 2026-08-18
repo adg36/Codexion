@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/08 18:30:19 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/18 11:42:47 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_dongle
 	int	id;
 	int	is_available;
 	int	held_by;
+	int	never_used;
 	int	began_cooldown;
 }	t_dongle;
 

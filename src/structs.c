@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/08 18:30:43 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/18 11:43:18 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
 	{
 		dongles[i].id = i + 1;
 		dongles[i].is_available = 1;
+		dongles[i].never_used = 1;
 		dongles[i].held_by = 0;
 		dongles[i].began_cooldown = 0;
 		i++;
