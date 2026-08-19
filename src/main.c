@@ -6,15 +6,12 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/19 09:04:57 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/19 13:15:57 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-#include <bits/pthreadtypes.h>
-#include <complex.h>
 #include <pthread.h>
-#include <sys/types.h>
 
 int	main(int argc, char **argv)
 {
@@ -36,10 +33,22 @@ int	main(int argc, char **argv)
 	}
 	init_settings(&settings, args);
 	dongles = init_dongles(dongles, &settings);
+	if (!dongles)
+	{
+		fprintf(stderr, "Error: failed to create dongles.\n");
+		return (1);
+	}
 	coders = init_coders(coders, &settings, &simulation, dongles);
+	if (!coders)
+	{
+		free(simulation.dongles);
+		fprintf(stderr, "Error: failed to create coders.\n");
+		return (2);
+	}
 	init_sim(&simulation, &settings, coders, dongles);
 
 	pthread_mutex_init(&simulation.mutex_dongles, NULL);
+	pthread_mutex_init(&simulation.mutex_print, NULL);
 	pthread_cond_init(&simulation.cond_dongles, NULL);
 
 	create_threads(&settings, &simulation, coders);
@@ -47,8 +56,12 @@ int	main(int argc, char **argv)
 	join_threads(&settings, &simulation);
 
 	pthread_mutex_destroy(&simulation.mutex_dongles);
+	pthread_mutex_destroy(&simulation.mutex_print);
 	pthread_cond_destroy(&simulation.cond_dongles);
 
+	free(simulation.dongles);
+	free(simulation.coders);
+	free(simulation.threads);
 	return (0);
 }
 
@@ -58,7 +71,10 @@ void	create_threads(t_settings *settings, t_simulation *simulation, t_coder *cod
 
 	simulation->threads = malloc(sizeof(pthread_t) * settings->number_of_coders);
 	if (!simulation->threads)
+	{
+		fprintf(stderr, "Error: failed to allocate threads.\n");
 		return ;
+	}
 	i = 0;
 	while (i < settings->number_of_coders)
 	{
