@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/18 11:42:47 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/19 08:44:40 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ typedef struct s_simulation
 {
 	t_settings		settings;
 	pthread_mutex_t	mutex_dongles;
+	pthread_cond_t	cond_dongles;
 	t_dongle		*dongles; // [dongle1, dongle2, etc.]
 	pthread_t		*threads; // [thread1, thread2, etc.]
 	struct timeval	start;

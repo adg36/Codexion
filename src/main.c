@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/08 18:29:56 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/19 09:04:57 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,14 @@ int	main(int argc, char **argv)
 	init_sim(&simulation, &settings, coders, dongles);
 
 	pthread_mutex_init(&simulation.mutex_dongles, NULL);
+	pthread_cond_init(&simulation.cond_dongles, NULL);
 
 	create_threads(&settings, &simulation, coders);
 
 	join_threads(&settings, &simulation);
 
 	pthread_mutex_destroy(&simulation.mutex_dongles);
+	pthread_cond_destroy(&simulation.cond_dongles);
 
 	return (0);
 }

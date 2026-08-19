@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:16:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/18 13:59:23 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/19 09:08:57 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,15 @@ void	*routine(void *threadarg)
 	i = 0;
 	while (i < coder_data->sim_data->settings.number_of_compiles_required)
 	{
+		pthread_mutex_lock(&coder_data->sim_data->mutex_dongles);
 		get_dongles(coder_data->sim_data->start, coder_data);
+		pthread_mutex_unlock(&coder_data->sim_data->mutex_dongles);
+		pthread_cond_signal(&coder_data->sim_data->cond_dongles);
 		compile(coder_data);
+		pthread_mutex_lock(&coder_data->sim_data->mutex_dongles);
 		release_dongles(coder_data->sim_data->start, coder_data);
+		pthread_mutex_unlock(&coder_data->sim_data->mutex_dongles);
+		pthread_cond_signal(&coder_data->sim_data->cond_dongles);
 		debug(coder_data->sim_data->start, coder_data->sim_data->settings.time_to_debug, coder_data->id);
 		refactor(coder_data->sim_data->start, coder_data->sim_data->settings.time_to_refactor, coder_data->id);
 		i++;
@@ -35,10 +41,9 @@ void	get_dongles(struct timeval start, t_coder *coder_data)
 {
 	long time_in_ms;
 
-	pthread_mutex_lock(&coder_data->sim_data->mutex_dongles);
+	time_in_ms = get_timestamp(start);
 	while (coder_data->id != coder_data->dongle_left->held_by)
 	{
-		time_in_ms = get_timestamp(start);
 		if (coder_data->dongle_left->is_available)
 		{
 			if (coder_data->dongle_left->never_used)
@@ -58,12 +63,11 @@ void	get_dongles(struct timeval start, t_coder *coder_data)
 		else
 		{
 			printf("Left dongle unavailable for coder %d. Unlocking mutex and waiting to try again.\n", coder_data->id);
-			pthread_mutex_unlock(&coder_data->sim_data->mutex_dongles);
+			pthread_cond_wait(&coder_data->sim_data->cond_dongles, &coder_data->sim_data->mutex_dongles);
 		}
 	}
 	while (coder_data->id != coder_data->dongle_right->held_by)
 	{
-		time_in_ms = get_timestamp(start);
 		if (coder_data->dongle_right->is_available)
 		{
 			if (coder_data->dongle_right->never_used)
@@ -83,15 +87,13 @@ void	get_dongles(struct timeval start, t_coder *coder_data)
 		else
 		{
 			printf("Right dongle unavailable for coder %d. Unlocking mutex and waiting to try again.\n", coder_data->id);
-			pthread_mutex_unlock(&coder_data->sim_data->mutex_dongles);
+			pthread_cond_wait(&coder_data->sim_data->cond_dongles, &coder_data->sim_data->mutex_dongles);
 		}
 	}
-	pthread_mutex_unlock(&coder_data->sim_data->mutex_dongles);
 }
 
 void	release_dongles(struct timeval start, t_coder *coder_data)
 {
-	pthread_mutex_lock(&coder_data->sim_data->mutex_dongles);
 	if (coder_data->id == coder_data->dongle_left->held_by && coder_data->id == coder_data->dongle_right->held_by)
 	{
 		coder_data->dongle_left->is_available = 1;
@@ -101,7 +103,12 @@ void	release_dongles(struct timeval start, t_coder *coder_data)
 		coder_data->dongle_left->began_cooldown = get_timestamp(start);
 		coder_data->dongle_right->began_cooldown = get_timestamp(start);
 	}
-	pthread_mutex_unlock(&coder_data->sim_data->mutex_dongles);
+	else {
+	{
+		printf("Dongles are being held by another coder. Waiting.\n");
+		pthread_cond_wait(&coder_data->sim_data->cond_dongles, &coder_data->sim_data->mutex_dongles);
+	}
+	}
 }
 
 void	compile(t_coder *coder_data)
