@@ -6,7 +6,7 @@
 #    By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/07/20 15:06:44 by razevedo          #+#    #+#              #
-#    Updated: 2026/08/05 14:47:50 by razevedo         ###   ########.fr        #
+#    Updated: 2026/08/20 15:36:54 by razevedo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,9 @@ CC = cc
 
 CFLAGS = -Wall -Wextra -Werror -Iinclude -pthread
 
-SRC = src/main.c \
+SRC = src/dongles.c \
+	  src/main.c \
+	  src/monitor.c \
 	  src/parser.c \
 	  src/routine.c \
 	  src/structs.c \

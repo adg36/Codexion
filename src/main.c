@@ -6,18 +6,17 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/20 10:17:10 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/20 15:35:18 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-#include <pthread.h>
 
 int	main(int argc, char **argv)
 {
 	char			**args;
 	t_settings		settings;
-	t_simulation	simulation;
+	t_program	simulation;
 	t_coder			*coders;
 	t_dongle		*dongles;
 
@@ -64,27 +63,27 @@ int	main(int argc, char **argv)
 	return (0);
 }
 
-void	create_threads(t_settings *settings, t_simulation *simulation, t_coder *coders)
+int	create_threads(t_settings *settings, t_program *simulation, t_coder *coders)
 {
 	int			i;
 
 	simulation->threads = malloc(sizeof(pthread_t) * settings->number_of_coders);
 	if (!simulation->threads)
-	{
-		fprintf(stderr, "Error: failed to allocate threads.\n");
-		return ;
-	}
+		return (fprintf(stderr, "Error: failed to allocate threads.\n"), 1);
 	i = 0;
 	while (i < settings->number_of_coders)
 	{
 		if (pthread_create(&simulation->threads[i], NULL, routine, (void *) &coders[i]) != 0)
-			fprintf(stderr, "Error creating thread %d\n", i);
+			return (fprintf(stderr, "Error creating thread %d\n", i), 1);
 		i++;
 	}
-	printf("%d threads created\n", settings->number_of_coders);
+	if (pthread_create(&simulation->monitor, NULL, monitor, simulation) != 0)
+		return (fprintf(stderr, "Error creating monitor thread.\n"), 1);
+	printf("%d threads plus monitor thread created\n", settings->number_of_coders);
+	return (0);
 }
 
-void	join_threads(t_settings *settings, t_simulation *simulation)
+int	join_threads(t_settings *settings, t_program *simulation)
 {
 	int	i;
 
@@ -92,9 +91,11 @@ void	join_threads(t_settings *settings, t_simulation *simulation)
 	while (i < settings->number_of_coders)
 	{
 		if (pthread_join(simulation->threads[i], NULL) != 0)
-			fprintf(stderr, "Error joining thread %d\n", i);
+			return (fprintf(stderr, "Error joining thread %d\n", i), 1);
 		i++;
 	}
-	printf("%d threads finished\n", settings->number_of_coders);
+	pthread_join(simulation->monitor, NULL);
+	printf("%d threads plus monitor thread finished\n", settings->number_of_coders);
+	return (0);
 }
 

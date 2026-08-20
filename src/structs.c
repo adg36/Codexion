@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/20 09:57:27 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/20 15:53:46 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,14 @@ t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
 	return (dongles);
 }
 
-t_coder	*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation, t_dongle *dongles)
+t_coder	*init_coders(t_coder *coders, t_settings *settings, t_program *simulation, t_dongle *dongles)
 {
 	int	i;
 
 	coders = malloc(sizeof(t_coder) * settings->number_of_coders);
 
 	if (!coders)
-		return (NULL);
+		return (printf("Error: malloc failed.\n"), NULL);
 
 	i = 0;
 	while (i < settings->number_of_coders)
@@ -73,13 +73,15 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings, t_simulation *simula
 		coders[i].sim_data = simulation;
 		coders[i].dongle_left = &(dongles[i]);
 		coders[i].dongle_right = &(dongles[(i + 1) % settings->number_of_coders]);
+		coders[i].begin_of_last_compile = 0;
+		coders[i].burnout = 0;
 		i++;
 	}
 	printf("%d coders (structs) created\n", settings->number_of_coders);
 	return (coders);
 }
 
-void	init_sim(t_simulation *sim, t_settings *settings, t_coder *coders, t_dongle *dongles)
+void	init_sim(t_program *sim, t_settings *settings, t_coder *coders, t_dongle *dongles)
 {
 	gettimeofday(&sim->start, NULL);
 	sim->threads = NULL;
