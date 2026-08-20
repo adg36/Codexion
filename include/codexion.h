@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/19 14:40:45 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/20 08:59:14 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,23 +64,24 @@ typedef struct s_simulation
 	t_coder			*coders; // [coder1, coder2, etc.]
 }	t_simulation;
 
-char		**get_args(int argc, char **argv);
-int			are_args_valid(char **args, int len);
-int			has_invalid_numbers(char **args, int len);
-int			has_invalid_scheduler(char *str);
-int			array_len(char **arr);
-void		create_threads(t_settings *settings, t_simulation *simulation, t_coder *coders);
-void		join_threads(t_settings *settings, t_simulation *simulation);
-long		get_timestamp(struct timeval start);
-void		get_dongles(struct timeval start, t_coder *coder_data);
-void		compile(t_coder *coder_data);
-void		release_dongles(struct timeval start, t_coder *coder_data);
-void		debug(struct timeval start, int time_to_debug, t_coder *coder_data);
-void		refactor(struct timeval start, int time_to_refactor, t_coder *coder_data);
-void		init_settings(t_settings *settings, char **args);
-t_coder		*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation, t_dongle *dongles);
-t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings);
-void		init_sim(t_simulation *sim, t_settings *settings, t_coder *coders, t_dongle *dongles);
-void		*routine(void *threadarg);
+char			**get_args(int argc, char **argv);
+int				are_args_valid(char **args, int len);
+int				has_invalid_numbers(char **args, int len);
+int				has_invalid_scheduler(char *str);
+int				array_len(char **arr);
+void			create_threads(t_settings *settings, t_simulation *simulation, t_coder *coders);
+void			join_threads(t_settings *settings, t_simulation *simulation);
+long			get_timestamp(struct timeval start);
+struct timespec build_deadline(long remaining_ms);
+void			get_dongles(struct timeval start, t_coder *coder_data);
+void			compile(t_coder *coder_data);
+void			release_dongles(struct timeval start, t_coder *coder_data);
+void			debug(struct timeval start, int time_to_debug, t_coder *coder_data);
+void			refactor(struct timeval start, int time_to_refactor, t_coder *coder_data);
+void			init_settings(t_settings *settings, char **args);
+t_coder			*init_coders(t_coder *coders, t_settings *settings, t_simulation *simulation, t_dongle *dongles);
+t_dongle		*init_dongles(t_dongle *dongles, t_settings *settings);
+void			init_sim(t_simulation *sim, t_settings *settings, t_coder *coders, t_dongle *dongles);
+void			*routine(void *threadarg);
 
 #endif

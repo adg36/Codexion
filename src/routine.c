@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:16:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/19 15:52:53 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/20 13:27:39 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,76 +33,41 @@ void	*routine(void *threadarg)
 
 void	get_dongles(struct timeval start, t_coder *coder_data)
 {
+	long			time_in_ms;
+	long			remaining_ms;
 	struct timespec	ts;
-	long			time_in_ms = 0;
 	int				rc;
 
-	rc = 0;
-
 	pthread_mutex_lock(&coder_data->sim_data->mutex_dongles);
-	// gettime does NOT belong here - move it
-	clock_gettime(CLOCK_REALTIME, &ts);
-	ts.tv_sec += coder_data->sim_data->settings.dongle_cooldown / 1000;
-	ts.tv_nsec += coder_data->sim_data->settings.dongle_cooldown % 1000 * 1000000;
-	if (ts.tv_nsec >= 1000000000)
+	while (coder_data->id != coder_data->dongle_left->held_by && coder_data->id != coder_data->dongle_right->held_by)
 	{
-		ts.tv_nsec -= 1000000000;
-		ts.tv_sec += 1;
-	}
-	// end of block to be moved
-	while (coder_data->id != coder_data->dongle_left->held_by)
-	{
-		while (!coder_data->dongle_left->is_available && rc != ETIMEDOUT)
+		while ((!coder_data->dongle_left->is_available
+			|| (!coder_data->dongle_left->never_used
+			&& get_timestamp(start) <= coder_data->dongle_left->began_cooldown + coder_data->sim_data->settings.dongle_cooldown))
+			|| (!coder_data->dongle_right->is_available
+			|| (!coder_data->dongle_right->never_used
+			&& get_timestamp(start) <= coder_data->dongle_right->began_cooldown + coder_data->sim_data->settings.dongle_cooldown))
+			|| coder_data->dongle_left == coder_data->dongle_right)
 		{
-			printf("Left dongle unavailable for coder %d. Waiting.\n", coder_data->id);
-			rc = pthread_cond_timedwait(&coder_data->sim_data->cond_dongles, &coder_data->sim_data->mutex_dongles, &ts);
-		}
-		if (coder_data->dongle_left->never_used)
-		{
-			coder_data->dongle_left->is_available = 0;
-			coder_data->dongle_left->held_by = coder_data->id;
-			coder_data->dongle_left->never_used = 0;
 			time_in_ms = get_timestamp(start);
-			pthread_mutex_lock(&coder_data->sim_data->mutex_print);
-			printf("%ld %d has taken a dongle.\n", time_in_ms, coder_data->id);
-			pthread_mutex_unlock(&coder_data->sim_data->mutex_print);
+			remaining_ms = coder_data->dongle_left->began_cooldown + coder_data->sim_data->settings.dongle_cooldown - time_in_ms;
+			ts = build_deadline(remaining_ms);
+			// printf("Left dongle unavailable for coder %d. Waiting.\n", coder_data->id);
+			rc = pthread_cond_timedwait(&coder_data->sim_data->cond_dongles,
+				&coder_data->sim_data->mutex_dongles, &ts);
+			(void)rc;
 		}
-		else if (time_in_ms > coder_data->dongle_left->began_cooldown + coder_data->sim_data->settings.dongle_cooldown)
-		{
-			coder_data->dongle_left->is_available = 0;
-			coder_data->dongle_left->held_by = coder_data->id;
-			time_in_ms = get_timestamp(start);
-			pthread_mutex_lock(&coder_data->sim_data->mutex_print);
-			printf("%ld %d has taken a dongle.\n", time_in_ms, coder_data->id);
-			pthread_mutex_unlock(&coder_data->sim_data->mutex_print);
-		}
-	}
-	while (coder_data->id != coder_data->dongle_right->held_by)
-	{
-		while (!coder_data->dongle_right->is_available && rc != ETIMEDOUT)
-		{
-			printf("Right dongle unavailable for coder %d. Unlocking mutex and waiting to try again.\n", coder_data->id);
-			rc = pthread_cond_timedwait(&coder_data->sim_data->cond_dongles, &coder_data->sim_data->mutex_dongles, &ts);
-		}
-		if (coder_data->dongle_right->never_used)
-		{
-			coder_data->dongle_right->is_available = 0;
-			coder_data->dongle_right->held_by = coder_data->id;
-			coder_data->dongle_right->never_used = 0;
-			time_in_ms = get_timestamp(start);
-			pthread_mutex_lock(&coder_data->sim_data->mutex_print);
-			printf("%ld %d has taken a dongle.\n", time_in_ms, coder_data->id);
-			pthread_mutex_unlock(&coder_data->sim_data->mutex_print);
-		}
-		else if (time_in_ms > coder_data->dongle_right->began_cooldown + coder_data->sim_data->settings.dongle_cooldown)
-		{
-			coder_data->dongle_right->is_available = 0;
-			coder_data->dongle_right->held_by = coder_data->id;
-			time_in_ms = get_timestamp(start);
-			pthread_mutex_lock(&coder_data->sim_data->mutex_print);
-			printf("%ld %d has taken a dongle.\n", time_in_ms, coder_data->id);
-			pthread_mutex_unlock(&coder_data->sim_data->mutex_print);
-		}
+		coder_data->dongle_left->is_available = 0;
+		coder_data->dongle_right->is_available = 0;
+		coder_data->dongle_left->held_by = coder_data->id;
+		coder_data->dongle_right->held_by = coder_data->id;
+		coder_data->dongle_left->never_used = 0;
+		coder_data->dongle_right->never_used = 0;
+		time_in_ms = get_timestamp(start);
+		pthread_mutex_lock(&coder_data->sim_data->mutex_print);
+		printf("%ld %d has taken a dongle.\n", time_in_ms, coder_data->id);
+		printf("%ld %d has taken a dongle.\n", time_in_ms, coder_data->id);
+		pthread_mutex_unlock(&coder_data->sim_data->mutex_print);
 	}
 	pthread_mutex_unlock(&coder_data->sim_data->mutex_dongles);
 }

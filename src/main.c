@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/19 13:15:57 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/20 10:17:10 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,16 @@ int	main(int argc, char **argv)
 	t_coder			*coders;
 	t_dongle		*dongles;
 
-	dongles = NULL;
-	coders = NULL;
+	if (argc != 9)
+		return (fprintf(stderr, "Error: wrong number of arguments.\n"), 1);
 	args = get_args(argc, argv);
 	if (!args)
-		return (0);
+		return (fprintf(stderr, "Error: parsing error.\n"), 1);
 	if (!are_args_valid(args, array_len(args)))
-	{
-		fprintf(stderr, "Error: invalid arguments.\n");
-		return (0);
-	}
+		return (fprintf(stderr, "Error: invalid arguments.\n"), 1);
 	init_settings(&settings, args);
+	dongles = NULL;
+	coders = NULL;
 	dongles = init_dongles(dongles, &settings);
 	if (!dongles)
 	{
