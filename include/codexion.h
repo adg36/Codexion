@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/20 15:51:41 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/20 17:19:59 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,9 @@ typedef struct s_program
 	t_settings		settings;
 	pthread_mutex_t	mutex_dongles;
 	pthread_mutex_t	mutex_print;
+	pthread_mutex_t	mutex_monitor;
 	pthread_cond_t	cond_dongles;
+	pthread_cond_t	cond_monitor;
 	t_dongle		*dongles; // [dongle1, dongle2, etc.]
 	pthread_t		*threads; // [thread1, thread2, etc.]
 	pthread_t		monitor;
@@ -87,8 +89,8 @@ t_coder			*init_coders(t_coder *coders, t_settings *settings, t_program *simulat
 t_dongle		*init_dongles(t_dongle *dongles, t_settings *settings);
 void			init_sim(t_program *sim, t_settings *settings, t_coder *coders, t_dongle *dongles);
 void			*routine(void *data);
-void			*monitor();
-int				stop_simulation(t_program *simulation);
+void			*monitor(void *arg);
+int				burnout_detected(t_program *simulation);
 
 
 #endif

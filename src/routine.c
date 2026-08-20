@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:16:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/20 16:03:10 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/20 17:20:48 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	*routine(void *data)
 
 	coder = (t_coder *)data;
 	i = 0;
-	while (i < coder->sim_data->settings.number_of_compiles_required && stop_simulation(coder->sim_data) == 0)
+	while (i < coder->sim_data->settings.number_of_compiles_required)
 	{
 		get_dongles(coder->sim_data->start, coder);
 		compile(coder);
@@ -67,23 +67,4 @@ void	refactor(struct timeval start, int time_to_refactor, t_coder *coder)
 	printf("%ld %d is refactoring\n", time_in_ms, coder->id);
 	pthread_mutex_unlock(&coder->sim_data->mutex_print);
 	usleep(time_to_refactor * 1000);
-}
-
-int	stop_simulation(t_program *simulation)
-{
-	int		i;
-	long	time_in_ms;
-
-	time_in_ms = get_timestamp(simulation->start);
-	i = 0;
-	while (i < simulation->settings.number_of_coders)
-	{
-		if (time_in_ms > simulation->coders[i].burnout)
-		{
-			printf("Coder %d burned out\n", simulation->coders[i].id);
-			return (1);
-		}
-		i++;
-	}
-	return (0);
 }

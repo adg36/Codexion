@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/20 15:15:58 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/20 17:03:57 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ void	get_dongles(struct timeval start, t_coder *coder)
 		time_in_ms = get_timestamp(start);
 		remaining_ms = coder->begin_of_last_compile + coder->sim_data->settings.time_to_compile + coder->sim_data->settings.dongle_cooldown - time_in_ms;
 		ts = build_deadline(remaining_ms);
-		// printf("Left dongle unavailable for coder %d. Waiting.\n", coder->id);
 		rc = pthread_cond_timedwait(&coder->sim_data->cond_dongles,
 			&coder->sim_data->mutex_dongles, &ts);
 		(void)rc;

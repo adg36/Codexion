@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/20 15:35:18 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/20 16:59:19 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ int	main(int argc, char **argv)
 
 	pthread_mutex_init(&simulation.mutex_dongles, NULL);
 	pthread_mutex_init(&simulation.mutex_print, NULL);
+	pthread_mutex_init(&simulation.mutex_monitor, NULL);
 	pthread_cond_init(&simulation.cond_dongles, NULL);
 
 	create_threads(&settings, &simulation, coders);
@@ -55,6 +56,7 @@ int	main(int argc, char **argv)
 
 	pthread_mutex_destroy(&simulation.mutex_dongles);
 	pthread_mutex_destroy(&simulation.mutex_print);
+	pthread_mutex_destroy(&simulation.mutex_monitor);
 	pthread_cond_destroy(&simulation.cond_dongles);
 
 	free(simulation.dongles);
