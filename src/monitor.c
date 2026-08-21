@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:35:34 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 15:19:14 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/21 16:24:27 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	*monitor(void * arg)
 	long			nearest_burnout;
 	long			remaining_ms;
 	struct timespec	ts;
+	int				rc;
 	long			time_in_ms;
 
 	simulation = (t_program *)arg;
@@ -29,7 +30,7 @@ void	*monitor(void * arg)
 		time_in_ms = get_timestamp(simulation->start);
 		remaining_ms = nearest_burnout - time_in_ms;
 		ts = build_deadline(remaining_ms);
-		pthread_cond_timedwait(&simulation->cond_monitor, &simulation->mutex_monitor, &ts);
+		rc = pthread_cond_timedwait(&simulation->cond_monitor, &simulation->mutex_monitor, &ts);
 		if (burnout_detected(simulation) || all_compiles_completed(simulation))
 		{
 			simulation->stop_simulation = 1;
