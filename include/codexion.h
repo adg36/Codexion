@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 09:29:32 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/21 09:54:44 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-typedef struct s_program t_program;
+typedef struct	s_program t_program;
 
 typedef struct s_settings
 {

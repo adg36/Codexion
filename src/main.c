@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 09:03:52 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/21 10:25:08 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int	main(int argc, char **argv)
 	pthread_mutex_init(&simulation.mutex_print, NULL);
 	pthread_mutex_init(&simulation.mutex_monitor, NULL);
 	pthread_cond_init(&simulation.cond_dongles, NULL);
+	pthread_cond_init(&simulation.cond_monitor, NULL);
 
 	create_threads(&settings, &simulation, coders);
 
@@ -58,6 +59,7 @@ int	main(int argc, char **argv)
 	pthread_mutex_destroy(&simulation.mutex_print);
 	pthread_mutex_destroy(&simulation.mutex_monitor);
 	pthread_cond_destroy(&simulation.cond_dongles);
+	pthread_cond_destroy(&simulation.cond_monitor);
 
 	free(simulation.dongles);
 	free(simulation.coders);
@@ -79,7 +81,7 @@ int	create_threads(t_settings *settings, t_program *simulation, t_coder *coders)
 			return (fprintf(stderr, "Error creating thread %d\n", i), 1);
 		i++;
 	}
-	if (pthread_create(&simulation->monitor, NULL, monitor, simulation) != 0)
+	if (pthread_create(&simulation->monitor, NULL, monitor, (void *) simulation) != 0)
 		return (fprintf(stderr, "Error creating monitor thread.\n"), 1);
 	printf("%d threads plus monitor thread created\n", settings->number_of_coders);
 	return (0);

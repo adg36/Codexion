@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 08:48:54 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/21 09:54:18 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings, t_program *simulatio
 		coders[i].dongle_l = &(dongles[i]);
 		coders[i].dongle_r = &(dongles[(i + 1) % settings->number_of_coders]);
 		coders[i].begin_of_last_compile = 0;
-		coders[i].burnout = 0;
 		i++;
 	}
 	printf("%d coders (structs) created\n", settings->number_of_coders);
