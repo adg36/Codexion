@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 09:54:44 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/21 15:06:38 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_coder
 	t_dongle	*dongle_l;
 	t_dongle	*dongle_r;
 	long		begin_of_last_compile;
+	int			total_compiles;
 }	t_coder;
 
 typedef struct s_program
@@ -59,11 +60,13 @@ typedef struct s_program
 	pthread_mutex_t	mutex_dongles;
 	pthread_mutex_t	mutex_print;
 	pthread_mutex_t	mutex_monitor;
+	pthread_mutex_t	mutex_compiles;
 	pthread_cond_t	cond_dongles;
 	pthread_cond_t	cond_monitor;
 	t_dongle		*dongles; // [dongle1, dongle2, etc.]
 	pthread_t		*threads; // [thread1, thread2, etc.]
 	pthread_t		monitor;
+	int				stop_simulation;
 	struct timeval	start;
 	t_coder			*coders; // [coder1, coder2, etc.]
 }	t_program;
@@ -78,7 +81,7 @@ int				join_threads(t_settings *settings, t_program *simulation);
 long			get_timestamp(struct timeval start);
 struct timespec build_deadline(long remaining_ms);
 int				dongles_are_unavailable(struct timeval start, t_coder *data);
-void			get_dongles(struct timeval start, t_coder *data);
+int				get_dongles(struct timeval start, t_coder *data);
 void			compile(t_coder *data);
 void			release_dongles(struct timeval start, t_coder *data);
 void			debug(struct timeval start, int time_to_debug, t_coder *data);
@@ -91,6 +94,7 @@ void			*routine(void *data);
 void			*monitor(void *arg);
 int				burnout_detected(t_program *simulation);
 long			find_nearest_burnout(t_program *simulation);
+int				all_compiles_completed(t_program *simulation);
 
 
 #endif

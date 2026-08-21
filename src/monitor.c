@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:35:34 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 09:30:08 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/21 15:19:14 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,11 @@ void	*monitor(void * arg)
 		remaining_ms = nearest_burnout - time_in_ms;
 		ts = build_deadline(remaining_ms);
 		pthread_cond_timedwait(&simulation->cond_monitor, &simulation->mutex_monitor, &ts);
-		if (burnout_detected(simulation))
+		if (burnout_detected(simulation) || all_compiles_completed(simulation))
+		{
+			simulation->stop_simulation = 1;
 			break ;
+		}
 		else
 		 	nearest_burnout = find_nearest_burnout(simulation);
 	}
@@ -52,6 +55,7 @@ int	burnout_detected(t_program *simulation)
 		coder_deadline = simulation->coders[i].begin_of_last_compile + simulation->settings.time_to_burnout;
 		if (time_in_ms > coder_deadline)
 		{
+			pthread_cond_broadcast(&simulation->cond_dongles); // wake up coder who is waiting for the dongles
 			pthread_mutex_lock(&simulation->mutex_print);
 			printf("%ld %d burned out\n", time_in_ms, simulation->coders[i].id);
 			pthread_mutex_unlock(&simulation->mutex_print);
@@ -80,4 +84,18 @@ long	find_nearest_burnout(t_program *simulation)
 		i++;
 	}
 	return (nearest_deadline);
+}
+
+int	all_compiles_completed(t_program *simulation)
+{
+	int	i;
+
+	i = 0;
+	while (i < simulation->settings.number_of_coders)
+	{
+		if (simulation->coders[i].total_compiles < simulation->settings.number_of_compiles_required)
+			return (0);
+		i++;
+	}
+	return (1);
 }

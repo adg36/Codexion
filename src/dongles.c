@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 08:48:54 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/21 14:53:36 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,11 @@ int	dongles_are_unavailable(struct timeval start, t_coder *coder)
 		return (0);
 }
 
-void	get_dongles(struct timeval start, t_coder *coder)
+int	get_dongles(struct timeval start, t_coder *coder)
 {
 	long			time_in_ms;
 	long			remaining_ms;
 	struct timespec	ts;
-	int				rc;
 
 	pthread_mutex_lock(&coder->sim->mutex_dongles);
 	while (dongles_are_unavailable(start, coder))
@@ -40,9 +39,13 @@ void	get_dongles(struct timeval start, t_coder *coder)
 		time_in_ms = get_timestamp(start);
 		remaining_ms = coder->begin_of_last_compile + coder->sim->settings.time_to_compile + coder->sim->settings.dongle_cooldown - time_in_ms;
 		ts = build_deadline(remaining_ms);
-		rc = pthread_cond_timedwait(&coder->sim->cond_dongles,
+		pthread_cond_timedwait(&coder->sim->cond_dongles,
 			&coder->sim->mutex_dongles, &ts);
-		(void)rc;
+		if (coder->sim->stop_simulation)
+		{
+			pthread_mutex_unlock(&coder->sim->mutex_dongles);
+			return (0);
+		}
 	}
 	coder->dongle_l->is_available = 0;
 	coder->dongle_r->is_available = 0;
@@ -56,6 +59,7 @@ void	get_dongles(struct timeval start, t_coder *coder)
 	printf("%ld %d has taken a dongle.\n", time_in_ms, coder->id);
 	pthread_mutex_unlock(&coder->sim->mutex_print);
 	pthread_mutex_unlock(&coder->sim->mutex_dongles);
+	return (1);
 }
 
 void	release_dongles(struct timeval start, t_coder *coder)
@@ -69,7 +73,7 @@ void	release_dongles(struct timeval start, t_coder *coder)
 		coder->dongle_r->held_by = 0;
 		coder->dongle_l->began_cooldown = get_timestamp(start);
 		coder->dongle_r->began_cooldown = get_timestamp(start);
+		pthread_cond_broadcast(&coder->sim->cond_dongles);
 	}
-	pthread_cond_broadcast(&coder->sim->cond_dongles);
 	pthread_mutex_unlock(&coder->sim->mutex_dongles);
 }

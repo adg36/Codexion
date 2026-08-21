@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 10:25:08 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/21 15:00:47 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	main(int argc, char **argv)
 {
 	char			**args;
 	t_settings		settings;
-	t_program	simulation;
+	t_program		simulation;
 	t_coder			*coders;
 	t_dongle		*dongles;
 
@@ -48,6 +48,7 @@ int	main(int argc, char **argv)
 	pthread_mutex_init(&simulation.mutex_dongles, NULL);
 	pthread_mutex_init(&simulation.mutex_print, NULL);
 	pthread_mutex_init(&simulation.mutex_monitor, NULL);
+	pthread_mutex_init(&simulation.mutex_compiles, NULL);
 	pthread_cond_init(&simulation.cond_dongles, NULL);
 	pthread_cond_init(&simulation.cond_monitor, NULL);
 
@@ -58,6 +59,7 @@ int	main(int argc, char **argv)
 	pthread_mutex_destroy(&simulation.mutex_dongles);
 	pthread_mutex_destroy(&simulation.mutex_print);
 	pthread_mutex_destroy(&simulation.mutex_monitor);
+	pthread_mutex_destroy(&simulation.mutex_compiles);
 	pthread_cond_destroy(&simulation.cond_dongles);
 	pthread_cond_destroy(&simulation.cond_monitor);
 
@@ -83,7 +85,6 @@ int	create_threads(t_settings *settings, t_program *simulation, t_coder *coders)
 	}
 	if (pthread_create(&simulation->monitor, NULL, monitor, (void *) simulation) != 0)
 		return (fprintf(stderr, "Error creating monitor thread.\n"), 1);
-	printf("%d threads plus monitor thread created\n", settings->number_of_coders);
 	return (0);
 }
 
@@ -99,7 +100,6 @@ int	join_threads(t_settings *settings, t_program *simulation)
 		i++;
 	}
 	pthread_join(simulation->monitor, NULL);
-	printf("%d threads plus monitor thread finished\n", settings->number_of_coders);
 	return (0);
 }
 
