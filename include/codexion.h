@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/20 17:19:59 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/21 09:29:32 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,10 @@ typedef struct s_dongle
 typedef struct s_coder
 {
 	int			id;
-	t_program	*sim_data;
-	t_dongle	*dongle_left;
-	t_dongle	*dongle_right;
+	t_program	*sim;
+	t_dongle	*dongle_l;
+	t_dongle	*dongle_r;
 	long		begin_of_last_compile;
-	long		burnout;
 }	t_coder;
 
 typedef struct s_program
@@ -91,6 +90,7 @@ void			init_sim(t_program *sim, t_settings *settings, t_coder *coders, t_dongle 
 void			*routine(void *data);
 void			*monitor(void *arg);
 int				burnout_detected(t_program *simulation);
+long			find_nearest_burnout(t_program *simulation);
 
 
 #endif
