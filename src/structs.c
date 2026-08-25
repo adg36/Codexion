@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 14:40:26 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/25 14:18:49 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,8 @@ t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
 	int	i;
 
 	dongles = malloc(sizeof(t_dongle) * settings->number_of_coders);
-
 	if (!dongles)
 		return (NULL);
-
 	i = 0;
 	while (i < settings->number_of_coders)
 	{
@@ -51,10 +49,8 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings, t_program *simulatio
 	int	i;
 
 	coders = malloc(sizeof(t_coder) * settings->number_of_coders);
-
 	if (!coders)
 		return (printf("Error: malloc failed.\n"), NULL);
-
 	i = 0;
 	while (i < settings->number_of_coders)
 	{

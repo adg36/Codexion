@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 12:10:43 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/25 14:15:45 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,25 +44,10 @@ int	main(int argc, char **argv)
 		return (2);
 	}
 	init_sim(&simulation, &settings, coders, dongles);
-
-	pthread_mutex_init(&simulation.mutex_dongles, NULL);
-	pthread_mutex_init(&simulation.mutex_print, NULL);
-	pthread_mutex_init(&simulation.mutex_monitor, NULL);
-	pthread_mutex_init(&simulation.mutex_compiles, NULL);
-	pthread_cond_init(&simulation.cond_dongles, NULL);
-	pthread_cond_init(&simulation.cond_monitor, NULL);
-
+	init_mutex_cond(&simulation);
 	create_threads(&settings, &simulation, coders);
-
 	join_threads(&settings, &simulation);
-
-	pthread_mutex_destroy(&simulation.mutex_dongles);
-	pthread_mutex_destroy(&simulation.mutex_print);
-	pthread_mutex_destroy(&simulation.mutex_monitor);
-	pthread_mutex_destroy(&simulation.mutex_compiles);
-	pthread_cond_destroy(&simulation.cond_dongles);
-	pthread_cond_destroy(&simulation.cond_monitor);
-
+	destroy_mutex_cond(&simulation);
 	free(simulation.dongles);
 	free(simulation.coders);
 	free(simulation.threads);
@@ -103,3 +88,22 @@ int	join_threads(t_settings *settings, t_program *simulation)
 	return (0);
 }
 
+void	init_mutex_cond(t_program *simulation)
+{
+	pthread_mutex_init(&simulation->mutex_dongles, NULL);
+	pthread_mutex_init(&simulation->mutex_print, NULL);
+	pthread_mutex_init(&simulation->mutex_monitor, NULL);
+	pthread_mutex_init(&simulation->mutex_compiles, NULL);
+	pthread_cond_init(&simulation->cond_dongles, NULL);
+	pthread_cond_init(&simulation->cond_monitor, NULL);
+}
+
+void	destroy_mutex_cond(t_program *simulation)
+{
+	pthread_mutex_destroy(&simulation->mutex_dongles);
+	pthread_mutex_destroy(&simulation->mutex_print);
+	pthread_mutex_destroy(&simulation->mutex_monitor);
+	pthread_mutex_destroy(&simulation->mutex_compiles);
+	pthread_cond_destroy(&simulation->cond_dongles);
+	pthread_cond_destroy(&simulation->cond_monitor);
+}

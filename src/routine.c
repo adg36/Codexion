@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:16:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 12:51:45 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/25 13:52:29 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,6 @@ void	*routine(void *data)
 				usleep(coder->sim->settings.time_to_debug * 1000);
 				print_logs(coder->sim->start, coder, "is refactoring");
 				usleep(coder->sim->settings.time_to_refactor * 1000);
-				// debug(coder->sim->start, coder->sim->settings.time_to_debug, coder);
-				// refactor(coder->sim->start, coder->sim->settings.time_to_refactor, coder);
 				i++;
 			}
 		}
@@ -50,48 +48,14 @@ void	compile(t_coder *coder)
 
 	time_in_ms = get_timestamp(coder->sim->start);
 	coder->begin_of_last_compile = time_in_ms;
-	// pthread_mutex_lock(&coder->sim->mutex_print);
 	print_logs(coder->sim->start, coder, "is compiling");
-	// printf("%ld %d is compiling\n", time_in_ms, coder->id);
 	pthread_cond_broadcast(&coder->sim->cond_monitor);
-	// pthread_mutex_unlock(&coder->sim->mutex_print);
 	usleep(coder->sim->settings.time_to_compile * 1000);
 	pthread_mutex_lock(&coder->sim->mutex_compiles);
 	coder->total_compiles++;
 	pthread_mutex_unlock(&coder->sim->mutex_compiles);
 }
-/*
-void	debug(struct timeval start, int time_to_debug, t_coder *coder)
-{
-	long			time_in_ms;
-	struct timespec	ts;
-	int				rc;
 
-	time_in_ms = get_timestamp(start);
-	pthread_mutex_lock(&coder->sim->mutex_print);
-	printf("%ld %d is debugging\n", time_in_ms, coder->id);
-	pthread_mutex_unlock(&coder->sim->mutex_print);
-	pthread_mutex_lock(&coder->sim->mutex_monitor);
-	ts = build_deadline(time_to_debug * 1000);
-	while (!coder->sim->stop_simulation)
-		rc = pthread_cond_timedwait(&coder->sim->cond_monitor, &coder->sim->mutex_monitor, &ts);
-	pthread_mutex_unlock(&coder->sim->mutex_monitor);
-	if (coder->sim->stop_simulation)
-		return ;
-		// usleep(time_to_debug * 1000);
-}
-
-void	refactor(struct timeval start, int time_to_refactor, t_coder *coder)
-{
-	long	time_in_ms;
-
-	time_in_ms = get_timestamp(start);
-	pthread_mutex_lock(&coder->sim->mutex_print);
-	printf("%ld %d is refactoring\n", time_in_ms, coder->id);
-	pthread_mutex_unlock(&coder->sim->mutex_print);
-	usleep(time_to_refactor * 1000);
-}
-*/
 void	print_logs(struct timeval start, t_coder *coder, char *message)
 {
 	long	time_in_ms;
@@ -104,4 +68,3 @@ void	print_logs(struct timeval start, t_coder *coder, char *message)
 		pthread_mutex_unlock(&coder->sim->mutex_print);
 	}
 }
-

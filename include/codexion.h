@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 12:29:34 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/25 14:16:24 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-typedef struct	s_program t_program;
+typedef struct s_program	t_program;
 
 typedef struct s_settings
 {
@@ -76,26 +76,42 @@ int				are_args_valid(char **args, int len);
 int				has_invalid_numbers(char **args, int len);
 int				has_invalid_scheduler(char *str);
 int				array_len(char **arr);
-int				create_threads(t_settings *settings, t_program *simulation, t_coder *coders);
+int				create_threads(
+					t_settings *settings,
+					t_program *simulation,
+					t_coder *coders);
 int				join_threads(t_settings *settings, t_program *simulation);
 long			get_timestamp(struct timeval start);
-struct timespec build_deadline(long remaining_ms);
+struct timespec	build_deadline(long remaining_ms);
 int				dongles_are_unavailable(struct timeval start, t_coder *data);
 int				get_dongles(struct timeval start, t_coder *data);
+void			assign_dongles(t_coder *coder);
 void			compile(t_coder *data);
 void			release_dongles(struct timeval start, t_coder *data);
 void			debug(struct timeval start, int time_to_debug, t_coder *data);
-void			refactor(struct timeval start, int time_to_refactor, t_coder *data);
+void			refactor(
+					struct timeval start,
+					int time_to_refactor,
+					t_coder *data);
 void			init_settings(t_settings *settings, char **args);
-t_coder			*init_coders(t_coder *coders, t_settings *settings, t_program *simulation, t_dongle *dongles);
+t_coder			*init_coders(
+					t_coder *coders,
+					t_settings *settings,
+					t_program *simulation,
+					t_dongle *dongles);
 t_dongle		*init_dongles(t_dongle *dongles, t_settings *settings);
-void			init_sim(t_program *sim, t_settings *settings, t_coder *coders, t_dongle *dongles);
+void			init_sim(
+					t_program *sim,
+					t_settings *settings,
+					t_coder *coders,
+					t_dongle *dongles);
+void			init_mutex_cond(t_program *simulation);
+void			destroy_mutex_cond(t_program *simulation);
 void			*routine(void *data);
 void			*monitor(void *arg);
 int				burnout_detected(t_program *simulation);
 long			find_nearest_burnout(t_program *simulation);
 int				all_compiles_completed(t_program *simulation);
 void			print_logs(struct timeval start, t_coder *coder, char *message);
-
 
 #endif

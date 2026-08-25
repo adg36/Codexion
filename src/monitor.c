@@ -6,13 +6,13 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:35:34 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 12:43:41 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/25 14:18:03 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void	*monitor(void * arg)
+void	*monitor(void *arg)
 {
 	t_program		*simulation;
 	long			nearest_burnout;
@@ -22,7 +22,6 @@ void	*monitor(void * arg)
 	long			time_in_ms;
 
 	simulation = (t_program *)arg;
-
 	pthread_mutex_lock(&simulation->mutex_monitor);
 	nearest_burnout = find_nearest_burnout(simulation);
 	while (1)
@@ -37,7 +36,7 @@ void	*monitor(void * arg)
 			break ;
 		}
 		else
-		 	nearest_burnout = find_nearest_burnout(simulation);
+			nearest_burnout = find_nearest_burnout(simulation);
 	}
 	pthread_mutex_unlock(&simulation->mutex_monitor);
 	return (NULL);
@@ -56,13 +55,10 @@ int	burnout_detected(t_program *simulation)
 		coder_deadline = simulation->coders[i].begin_of_last_compile + simulation->settings.time_to_burnout;
 		if (time_in_ms > coder_deadline)
 		{
-			pthread_cond_broadcast(&simulation->cond_dongles); // wake up coder who is waiting for the dongles
-			pthread_cond_broadcast(&simulation->cond_monitor); // wake up coder who is debugging/refactoring
+			pthread_cond_broadcast(&simulation->cond_dongles);
+			pthread_cond_broadcast(&simulation->cond_monitor);
 			print_logs(simulation->start, &simulation->coders[i], "burned out");
 			simulation->stop_simulation = 1;
-			// pthread_mutex_lock(&simulation->mutex_print);
-			// printf("%ld %d burned out\n", time_in_ms, simulation->coders[i].id);
-			// pthread_mutex_unlock(&simulation->mutex_print);
 			return (1);
 		}
 		i++;
