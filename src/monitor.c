@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:35:34 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 16:24:27 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/25 12:43:41 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,12 @@ int	burnout_detected(t_program *simulation)
 		if (time_in_ms > coder_deadline)
 		{
 			pthread_cond_broadcast(&simulation->cond_dongles); // wake up coder who is waiting for the dongles
-			pthread_mutex_lock(&simulation->mutex_print);
-			printf("%ld %d burned out\n", time_in_ms, simulation->coders[i].id);
-			pthread_mutex_unlock(&simulation->mutex_print);
+			pthread_cond_broadcast(&simulation->cond_monitor); // wake up coder who is debugging/refactoring
+			print_logs(simulation->start, &simulation->coders[i], "burned out");
+			simulation->stop_simulation = 1;
+			// pthread_mutex_lock(&simulation->mutex_print);
+			// printf("%ld %d burned out\n", time_in_ms, simulation->coders[i].id);
+			// pthread_mutex_unlock(&simulation->mutex_print);
 			return (1);
 		}
 		i++;

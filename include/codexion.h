@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 15:06:38 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/25 12:29:34 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ void			*monitor(void *arg);
 int				burnout_detected(t_program *simulation);
 long			find_nearest_burnout(t_program *simulation);
 int				all_compiles_completed(t_program *simulation);
+void			print_logs(struct timeval start, t_coder *coder, char *message);
 
 
 #endif
