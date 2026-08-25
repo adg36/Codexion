@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:16:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 12:43:01 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/25 12:51:45 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,11 @@ void	compile(t_coder *coder)
 
 	time_in_ms = get_timestamp(coder->sim->start);
 	coder->begin_of_last_compile = time_in_ms;
-	pthread_mutex_lock(&coder->sim->mutex_print);
-	printf("%ld %d is compiling\n", time_in_ms, coder->id);
+	// pthread_mutex_lock(&coder->sim->mutex_print);
+	print_logs(coder->sim->start, coder, "is compiling");
+	// printf("%ld %d is compiling\n", time_in_ms, coder->id);
 	pthread_cond_broadcast(&coder->sim->cond_monitor);
-	pthread_mutex_unlock(&coder->sim->mutex_print);
+	// pthread_mutex_unlock(&coder->sim->mutex_print);
 	usleep(coder->sim->settings.time_to_compile * 1000);
 	pthread_mutex_lock(&coder->sim->mutex_compiles);
 	coder->total_compiles++;

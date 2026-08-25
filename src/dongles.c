@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/21 16:23:19 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/25 12:53:57 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,13 @@ int	get_dongles(struct timeval start, t_coder *coder)
 	coder->dongle_r->held_by = coder->id;
 	coder->dongle_l->never_used = 0;
 	coder->dongle_r->never_used = 0;
-	time_in_ms = get_timestamp(start);
-	pthread_mutex_lock(&coder->sim->mutex_print);
-	printf("%ld %d has taken a dongle.\n", time_in_ms, coder->id);
-	printf("%ld %d has taken a dongle.\n", time_in_ms, coder->id);
-	pthread_mutex_unlock(&coder->sim->mutex_print);
+	// time_in_ms = get_timestamp(start);
+	print_logs(coder->sim->start, coder, "has taken a dongle");
+	print_logs(coder->sim->start, coder, "has taken a dongle");
+	// pthread_mutex_lock(&coder->sim->mutex_print);
+	// printf("%ld %d has taken a dongle.\n", time_in_ms, coder->id);
+	// printf("%ld %d has taken a dongle.\n", time_in_ms, coder->id);
+	// pthread_mutex_unlock(&coder->sim->mutex_print);
 	pthread_mutex_unlock(&coder->sim->mutex_dongles);
 	return (1);
 }
