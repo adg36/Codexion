@@ -6,14 +6,13 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 14:16:24 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/25 16:23:11 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CODEXION_H
 # define CODEXION_H
 
-# include <errno.h>
 # include <pthread.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -63,12 +62,12 @@ typedef struct s_program
 	pthread_mutex_t	mutex_compiles;
 	pthread_cond_t	cond_dongles;
 	pthread_cond_t	cond_monitor;
-	t_dongle		*dongles; // [dongle1, dongle2, etc.]
-	pthread_t		*threads; // [thread1, thread2, etc.]
+	t_dongle		*dongles;
+	pthread_t		*threads;
 	pthread_t		monitor;
 	int				stop_simulation;
 	struct timeval	start;
-	t_coder			*coders; // [coder1, coder2, etc.]
+	t_coder			*coders;
 }	t_program;
 
 char			**get_args(int argc, char **argv);
@@ -113,5 +112,6 @@ int				burnout_detected(t_program *simulation);
 long			find_nearest_burnout(t_program *simulation);
 int				all_compiles_completed(t_program *simulation);
 void			print_logs(struct timeval start, t_coder *coder, char *message);
+void			swap(int *a, int *b);
 
 #endif

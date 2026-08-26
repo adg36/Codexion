@@ -1,33 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   heap.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/05 08:53:45 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 16:22:52 by razevedo         ###   ########.fr       */
+/*   Created: 2026/08/26 11:48:53 by razevedo          #+#    #+#             */
+/*   Updated: 2026/08/26 11:49:07 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-int	array_len(char **arr)
-{
-	int	i;
 
-	i = 0;
-	while (*arr)
-	{
-		i++;
-		arr++;
-	}
-	return (i);
-}
-
-void	swap(int *a, int *b)
-{
-	int temp = *a;
-	*a = *b;
-	*b = temp;
-}
