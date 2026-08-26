@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 14:18:49 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/26 15:46:14 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	init_settings(t_settings *settings, char **args)
 
 t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
 {
-	int	i;
+	int		i;
 
 	dongles = malloc(sizeof(t_dongle) * settings->number_of_coders);
 	if (!dongles)
@@ -39,6 +39,7 @@ t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
 		dongles[i].never_used = 1;
 		dongles[i].held_by = 0;
 		dongles[i].began_cooldown = 0;
+		dongles[i].queue = NULL;
 		i++;
 	}
 	return (dongles);
@@ -74,3 +75,16 @@ void	init_sim(t_program *sim, t_settings *settings, t_coder *coders, t_dongle *d
 	sim->dongles = dongles;
 	sim->stop_simulation = 0;
 }
+
+void	init_queues(t_settings *settings, t_dongle *dongles)
+{
+	int	i;
+
+	i = 0;
+	while (i < settings->number_of_coders)
+	{
+		dongles[i].queue = create_queue(QUEUE_CAPACITY);
+		i++;
+	}
+}
+

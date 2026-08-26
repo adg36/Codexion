@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 14:06:59 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/26 16:27:41 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,19 @@ int	get_dongles(struct timeval start, t_coder *coder)
 
 void	assign_dongles(t_coder *coder)
 {
+	// check if next coders in line for both dongles are the same coder
+	// assign if yes
+	if (pop_left(coder->dongle_l->queue, coder) == pop_left(coder->dongle_r->queue, coder))
+	{
+		coder->dongle_l->held_by = coder->dongle_l->heap->array[0].id;
+		coder->dongle_r->held_by = coder->dongle_r->heap->array[0].id;
+	}
+	else
+	{
+		????????
+	}
 	coder->dongle_l->is_available = 0;
 	coder->dongle_r->is_available = 0;
-	coder->dongle_l->held_by = coder->id;
-	coder->dongle_r->held_by = coder->id;
 	coder->dongle_l->never_used = 0;
 	coder->dongle_r->never_used = 0;
 }

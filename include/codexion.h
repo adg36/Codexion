@@ -6,12 +6,14 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 16:23:11 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/26 16:22:37 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CODEXION_H
 # define CODEXION_H
+
+# define QUEUE_CAPACITY 2
 
 # include <pthread.h>
 # include <stdio.h>
@@ -21,6 +23,14 @@
 # include <unistd.h>
 
 typedef struct s_program	t_program;
+typedef struct s_coder		t_coder;
+
+typedef struct	s_queue
+{
+	t_coder		*array;
+	int			size;
+	int			capacity;
+}	t_queue;
 
 typedef struct s_settings
 {
@@ -41,6 +51,7 @@ typedef struct s_dongle
 	int		held_by;
 	int		never_used;
 	long	began_cooldown;
+	t_queue	*queue;
 }	t_dongle;
 
 typedef struct s_coder
@@ -105,6 +116,8 @@ void			init_sim(
 					t_coder *coders,
 					t_dongle *dongles);
 void			init_mutex_cond(t_program *simulation);
+void			init_queues(t_settings *settings, t_dongle *dongles);
+t_queue			*create_queue(int capacity);
 void			destroy_mutex_cond(t_program *simulation);
 void			*routine(void *data);
 void			*monitor(void *arg);
@@ -113,5 +126,7 @@ long			find_nearest_burnout(t_program *simulation);
 int				all_compiles_completed(t_program *simulation);
 void			print_logs(struct timeval start, t_coder *coder, char *message);
 void			swap(int *a, int *b);
+void			push_and_fix(t_queue *queue, t_coder *coder);
+t_coder			pop_left(t_queue *queue, t_coder *coder);
 
 #endif

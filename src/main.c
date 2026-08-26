@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 14:15:45 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/26 15:39:35 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int	main(int argc, char **argv)
 		fprintf(stderr, "Error: failed to create coders.\n");
 		return (2);
 	}
+	init_queues(&settings, dongles);
 	init_sim(&simulation, &settings, coders, dongles);
 	init_mutex_cond(&simulation);
 	create_threads(&settings, &simulation, coders);
