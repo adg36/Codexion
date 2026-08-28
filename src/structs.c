@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/26 15:46:14 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/28 16:08:49 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,16 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings, t_program *simulatio
 	{
 		coders[i].id = i + 1;
 		coders[i].sim = simulation;
-		coders[i].dongle_l = &(dongles[i]);
-		coders[i].dongle_r = &(dongles[(i + 1) % settings->number_of_coders]);
+		if (i == settings->number_of_coders - 1)
+		{
+			coders[i].first_dongle = &(dongles[(i + 1) % settings->number_of_coders]);
+			coders[i].second_dongle = &(dongles[i]);
+		}
+		else
+		{
+			coders[i].first_dongle = &(dongles[i]);
+			coders[i].second_dongle = &(dongles[(i + 1) % settings->number_of_coders]);
+		}
 		coders[i].begin_of_last_compile = 0;
 		coders[i].total_compiles = 0;
 		i++;

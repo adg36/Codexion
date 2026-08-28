@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/28 13:57:59 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/28 16:26:39 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ typedef struct s_coder
 {
 	int			id;
 	t_program	*sim;
-	t_dongle	*dongle_l;
-	t_dongle	*dongle_r;
+	t_dongle	*first_dongle;
+	t_dongle	*second_dongle;
 	long		begin_of_last_compile;
 	int			total_compiles;
 }	t_coder;
@@ -93,9 +93,9 @@ int				create_threads(
 int				join_threads(t_settings *settings, t_program *simulation);
 long			get_timestamp(struct timeval start);
 struct timespec	build_deadline(long remaining_ms);
-int				dongles_are_unavailable(struct timeval start, t_coder *data);
+// int				dongles_are_unavailable(struct timeval start, t_coder *data);
 int				get_dongles(struct timeval start, t_coder *data);
-void			assign_dongles(t_coder *coder);
+// void			assign_dongles(t_coder *coder);
 void			compile(t_coder *data);
 void			release_dongles(struct timeval start, t_coder *data);
 void			debug(struct timeval start, int time_to_debug, t_coder *data);
@@ -131,6 +131,9 @@ void			push(t_queue *queue, t_coder *coder);
 int				pop_left(t_queue *queue);
 int				pop_right(t_queue *queue);
 int				first_in_line(t_queue *queue);
-int				has_priority(t_coder *coder);
+int				has_priority(t_coder *coder, t_dongle *dongle);
+int				first_dongle_is_unavailable(struct timeval start, t_coder *coder);
+int				second_dongle_is_unavailable(struct timeval start, t_coder *coder);
+void			grab_dongle(t_coder *coder, t_dongle *dongle);
 
 #endif
