@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:16:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/26 16:00:23 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/28 14:19:18 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,15 @@ void	*routine(void *data)
 	i = 0;
 	while (i < coder->sim->settings.number_of_compiles_required && !coder->sim->stop_simulation)
 	{
-		// get in queue for both dongles
-		if (strcmp(coder->sim->settings->scheduler, "fifo") == 0)
+		if (strcmp(coder->sim->settings.scheduler, "fifo") == 0)
 		{
 			push(coder->dongle_l->queue, coder);
 			push(coder->dongle_r->queue, coder);
 		}
-		else if (strcmp(coder->sim->settings->scheduler, "edf") == 0)
+		else if (strcmp(coder->sim->settings.scheduler, "edf") == 0)
 		{
-			push_and_fix(coder->dongle_l->queue, coder);
-			push_and_fix(coder->dongle_r->queue, coder);
+			push_and_fix(coder->dongle_l->queue, &coder->sim->settings, coder);
+			push_and_fix(coder->dongle_r->queue, &coder->sim->settings, coder);
 		}
 		if (!get_dongles(coder->sim->start, coder))
 			return (NULL);

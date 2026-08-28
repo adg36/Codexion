@@ -25,7 +25,7 @@ t_queue	*create_queue(int capacity)
 	}
 	queue->size = 0;
 	queue->capacity = capacity;
-	queue->array = (t_coder *)malloc(capacity * sizeof(t_coder));
+	queue->array = malloc(capacity * sizeof(int));
 	if (!queue->array)
 	{
 		fprintf(stderr, "Error: Malloc failed.");
@@ -47,11 +47,11 @@ void	push_and_fix(t_queue *queue, t_settings *settings, t_coder *coder)
 		return ;
 	}
 	queue->size++;
-	queue->array[queue->size - 1] = coder;
+	queue->array[queue->size - 1] = coder->id;
 	if (queue->size == QUEUE_CAPACITY)
 	{
-		deadline1 = queue->array[0].begin_of_last_compile + settings->time_to_burnout;
-		deadline2 = queue->array[1].begin_of_last_compile + settings->time_to_burnout;
+		deadline1 = coder[queue->array[0] - 1].begin_of_last_compile + settings->time_to_burnout;
+		deadline2 = coder[queue->array[1] - 1].begin_of_last_compile + settings->time_to_burnout;
 		if (deadline2 < deadline1)
 			swap(&queue->array[0], &queue->array[1]);
 	}
@@ -65,17 +65,17 @@ void	push(t_queue *queue, t_coder *coder)
 		return ;
 	}
 	queue->size++;
-	queue->array[queue->size - 1] = coder;
+	queue->array[queue->size - 1] = coder->id;
 }
 
-t_coder	pop_left(t_queue *queue, t_coder *coder)
+int	pop_left(t_queue *queue)
 {
-	t_coder	root;
+	int	root;
 
 	if (queue->size <= 0)
 	{
-		fprintf(stderr, "queue is already empty.\n");
-		return ;
+		fprintf(stderr, "Queue is already empty\n");
+		return (0);
 	}
 	if (queue->size == 1)
 	{
@@ -88,12 +88,12 @@ t_coder	pop_left(t_queue *queue, t_coder *coder)
 	return (root);
 }
 
-t_coder	pop_right(t_queue *queue, t_coder *coder)
+int	pop_right(t_queue *queue)
 {
 	if (queue->size <= 0)
 	{
-		fprintf(stderr, "queue is already empty.\n");
-		return ;
+		fprintf(stderr, "Queue is already empty\n");
+		return (0);
 	}
 	if (queue->size == 1)
 	{
@@ -102,4 +102,14 @@ t_coder	pop_right(t_queue *queue, t_coder *coder)
 	}
 	queue->size--;
 	return (queue->array[1]);
+}
+
+int	first_in_line(t_queue *queue)
+{
+	if (queue->size <= 0)
+	{
+		fprintf(stderr, "Queue is empty\n");
+		return (0);
+	}
+	return (queue->array[0]);
 }

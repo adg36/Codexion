@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/26 16:27:41 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/28 14:19:01 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 int	dongles_are_unavailable(struct timeval start, t_coder *coder)
 {
 	if ((!coder->dongle_l->is_available
-			|| (!coder->dongle_l->never_used
-				&& get_timestamp(start) <= coder->dongle_l->began_cooldown + coder->sim->settings.dongle_cooldown))
-		|| (!coder->dongle_r->is_available
-			|| (!coder->dongle_r->never_used
-				&& get_timestamp(start) <= coder->dongle_r->began_cooldown + coder->sim->settings.dongle_cooldown))
-		|| coder->dongle_l == coder->dongle_r)
+		|| (!coder->dongle_l->never_used
+			&& get_timestamp(start) <= coder->dongle_l->began_cooldown + coder->sim->settings.dongle_cooldown))
+			|| (!coder->dongle_r->is_available
+				|| (!coder->dongle_r->never_used
+					&& get_timestamp(start) <= coder->dongle_r->began_cooldown + coder->sim->settings.dongle_cooldown))
+					|| coder->dongle_l == coder->dongle_r)
 	{
 		return (1);
 	}
@@ -35,7 +35,7 @@ int	get_dongles(struct timeval start, t_coder *coder)
 	struct timespec	ts;
 
 	pthread_mutex_lock(&coder->sim->mutex_dongles);
-	while (dongles_are_unavailable(start, coder))
+	while (dongles_are_unavailable(start, coder) || !has_priority(coder))
 	{
 		time_in_ms = get_timestamp(start);
 		remaining_ms = coder->begin_of_last_compile + coder->sim->settings.time_to_compile + coder->sim->settings.dongle_cooldown - time_in_ms;
@@ -48,29 +48,20 @@ int	get_dongles(struct timeval start, t_coder *coder)
 		}
 	}
 	assign_dongles(coder);
-	print_logs(coder->sim->start, coder, "has taken a dongle");
-	print_logs(coder->sim->start, coder, "has taken a dongle");
 	pthread_mutex_unlock(&coder->sim->mutex_dongles);
 	return (1);
 }
 
 void	assign_dongles(t_coder *coder)
 {
-	// check if next coders in line for both dongles are the same coder
-	// assign if yes
-	if (pop_left(coder->dongle_l->queue, coder) == pop_left(coder->dongle_r->queue, coder))
-	{
-		coder->dongle_l->held_by = coder->dongle_l->heap->array[0].id;
-		coder->dongle_r->held_by = coder->dongle_r->heap->array[0].id;
-	}
-	else
-	{
-		????????
-	}
+	coder->dongle_l->held_by = pop_left(coder->dongle_l->queue);
+	coder->dongle_r->held_by = pop_left(coder->dongle_r->queue);
 	coder->dongle_l->is_available = 0;
 	coder->dongle_r->is_available = 0;
 	coder->dongle_l->never_used = 0;
 	coder->dongle_r->never_used = 0;
+	print_logs(coder->sim->start, coder, "has taken a dongle");
+	print_logs(coder->sim->start, coder, "has taken a dongle");
 }
 
 void	release_dongles(struct timeval start, t_coder *coder)
@@ -87,4 +78,11 @@ void	release_dongles(struct timeval start, t_coder *coder)
 		pthread_cond_broadcast(&coder->sim->cond_dongles);
 	}
 	pthread_mutex_unlock(&coder->sim->mutex_dongles);
+}
+
+int	has_priority(t_coder *coder)
+{
+	if (first_in_line(coder->dongle_l->queue) == first_in_line(coder->dongle_r->queue))
+		return (1);
+	return (0);
 }

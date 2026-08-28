@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/26 16:22:37 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/28 13:57:59 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ typedef struct s_coder		t_coder;
 
 typedef struct	s_queue
 {
-	t_coder		*array;
-	int			size;
-	int			capacity;
+	int	*array;
+	int	size;
+	int	capacity;
 }	t_queue;
 
 typedef struct s_settings
@@ -126,7 +126,11 @@ long			find_nearest_burnout(t_program *simulation);
 int				all_compiles_completed(t_program *simulation);
 void			print_logs(struct timeval start, t_coder *coder, char *message);
 void			swap(int *a, int *b);
-void			push_and_fix(t_queue *queue, t_coder *coder);
-t_coder			pop_left(t_queue *queue, t_coder *coder);
+void			push_and_fix(t_queue *queue, t_settings *settings, t_coder *coder);
+void			push(t_queue *queue, t_coder *coder);
+int				pop_left(t_queue *queue);
+int				pop_right(t_queue *queue);
+int				first_in_line(t_queue *queue);
+int				has_priority(t_coder *coder);
 
 #endif
