@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/29 12:07:41 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/29 14:09:16 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ int				all_compiles_completed(t_program *simulation);
 void			print_logs(struct timeval start, t_coder *coder, char *message);
 void			swap(int *a, int *b);
 void			enqueue(t_coder *coder);
-void			enqueue_edf(t_queue *queue, t_settings *settings, t_coder *coder);
+void			enqueue_edf(t_queue *queue, t_program *simulation, t_coder *coder);
 void			enqueue_fifo(t_coder *coder, t_queue *queue);
 int				pop_left(t_queue *queue);
 int				pop_right(t_queue *queue);

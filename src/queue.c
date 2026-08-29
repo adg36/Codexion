@@ -43,12 +43,12 @@ void	enqueue(t_coder *coder)
 	}
 	else if (strcmp(coder->sim->settings.scheduler, "edf") == 0)
 	{
-		enqueue_edf(coder->first_dongle->queue, &coder->sim->settings, coder);
-		enqueue_edf(coder->second_dongle->queue, &coder->sim->settings, coder);
+		enqueue_edf(coder->first_dongle->queue, coder->sim, coder);
+		enqueue_edf(coder->second_dongle->queue, coder->sim, coder);
 	}
 }
 
-void	enqueue_edf(t_queue *queue, t_settings *settings, t_coder *coder)
+void	enqueue_edf(t_queue *queue, t_program *simulation, t_coder *coder)
 {
 	long	deadline1;
 	long	deadline2;
@@ -64,8 +64,8 @@ void	enqueue_edf(t_queue *queue, t_settings *settings, t_coder *coder)
 	queue->array[queue->size - 1] = coder->id;
 	if (queue->size == QUEUE_CAPACITY)
 	{
-		deadline1 = coder[queue->array[0] - 1].begin_of_last_compile + settings->time_to_burnout;
-		deadline2 = coder[queue->array[1] - 1].begin_of_last_compile + settings->time_to_burnout;
+		deadline1 = simulation->coders[queue->array[0] - 1].begin_of_last_compile + simulation->settings.time_to_burnout;
+		deadline2 = simulation->coders[queue->array[1] - 1].begin_of_last_compile + simulation->settings.time_to_burnout;
 		if (deadline2 < deadline1)
 			swap(&queue->array[0], &queue->array[1]);
 	}
