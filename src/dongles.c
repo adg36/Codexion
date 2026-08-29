@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/29 10:44:46 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/29 16:29:05 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,5 +148,10 @@ int	has_priority(t_coder *coder)
 	if (first_in_line(coder->first_dongle->queue) == coder->id
 	&& first_in_line(coder->second_dongle->queue) == coder->id)
 		return (1);
+	/*else if ((first_in_line(coder->first_dongle->queue) == coder->id
+	&& coder->second_dongle->queue->array[1] == coder->id)
+	|| (first_in_line(coder->second_dongle->queue) == coder->id
+	&& (coder->first_dongle->queue->array[1] == coder->id)))
+		return (1);*/
 	return (0);
 }
