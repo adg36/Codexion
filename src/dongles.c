@@ -36,8 +36,6 @@ int	get_dongles(struct timeval start, t_coder *coder)
 
 	pthread_mutex_lock(&coder->sim->mutex_dongles);
 	enqueue(coder);
-	pthread_mutex_unlock(&coder->sim->mutex_dongles);
-	pthread_mutex_lock(&coder->sim->mutex_dongles);
 	while (dongles_are_unavailable(start, coder) || !has_priority(coder))
 	{
 		time_in_ms = get_timestamp(start);
@@ -64,56 +62,6 @@ int	dongle_is_unavailable(struct timeval start, t_coder *coder, t_dongle *dongle
 		return (1);
 	return (0);
 }
-/*
-int	get_dongles(struct timeval start, t_coder *coder)
-{
-	long	time_in_ms;
-	long	remaining_ms;
-	int				rc;
-	struct timespec	ts;
-
-	pthread_mutex_lock(&coder->sim->mutex_dongles);
-	enqueue(coder);
-	pthread_mutex_unlock(&coder->sim->mutex_dongles);
-	pthread_mutex_lock(&coder->sim->mutex_dongles);
-	while(dongle_is_unavailable(start, coder, coder->first_dongle) || !has_priority(coder, coder->first_dongle))
-	{
-		time_in_ms = get_timestamp(start);
-		remaining_ms = coder->begin_of_last_compile + coder->sim->settings.time_to_compile + coder->sim->settings.dongle_cooldown - time_in_ms;
-		ts = build_deadline(remaining_ms);
-		rc = pthread_cond_timedwait(&coder->sim->cond_dongles, &coder->sim->mutex_dongles, &ts);
-		if (coder->sim->stop_simulation)
-		{
-			pthread_mutex_unlock(&coder->sim->mutex_dongles);
-			return (0);
-		}
-	}
-	grab_dongle(coder, coder->first_dongle);
-	while(dongle_is_unavailable(start, coder, coder->second_dongle) || !has_priority(coder, coder->second_dongle))
-	{
-		time_in_ms = get_timestamp(start);
-		remaining_ms = coder->begin_of_last_compile + coder->sim->settings.time_to_compile + coder->sim->settings.dongle_cooldown - time_in_ms;
-		ts = build_deadline(remaining_ms);
-		rc = pthread_cond_timedwait(&coder->sim->cond_dongles, &coder->sim->mutex_dongles, &ts);
-		if (coder->sim->stop_simulation)
-		{
-			pthread_mutex_unlock(&coder->sim->mutex_dongles);
-			return (0);
-		}
-	}
-	grab_dongle(coder, coder->second_dongle);
-	pthread_mutex_unlock(&coder->sim->mutex_dongles);
-	(void)rc;
-	return (1);
-}
-
-void	grab_dongle(t_coder *coder, t_dongle *dongle)
-{
-	dongle->held_by = pop_left(dongle->queue);
-	dongle->is_available = 0;
-	dongle->never_used = 0;
-	print_logs(coder->sim->start, coder, "has taken a dongle");
-}*/
 
 void	assign_dongles(t_coder *coder)
 {
@@ -149,9 +97,16 @@ int	has_priority(t_coder *coder)
 	&& first_in_line(coder->second_dongle->queue) == coder->id)
 		return (1);
 	/*else if ((first_in_line(coder->first_dongle->queue) == coder->id
-	&& coder->second_dongle->queue->array[1] == coder->id)
-	|| (first_in_line(coder->second_dongle->queue) == coder->id
+	&& coder->second_dongle->queue->array[1] == coder->id))
+	{
+		swap(&coder->second_dongle->queue->array[1], &coder->second_dongle->queue->array[0]);
+		return (1);
+	}
+	else if ((first_in_line(coder->second_dongle->queue) == coder->id
 	&& (coder->first_dongle->queue->array[1] == coder->id)))
-		return (1);*/
+	{
+		swap(&coder->first_dongle->queue->array[1], &coder->first_dongle->queue->array[0]);	
+		return (1);
+	}*/
 	return (0);
 }
