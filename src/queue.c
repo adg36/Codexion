@@ -34,7 +34,21 @@ t_queue	*create_queue(int capacity)
 	return (queue);
 }
 
-void	push_and_fix(t_queue *queue, t_settings *settings, t_coder *coder)
+void	enqueue(t_coder *coder)
+{
+	if (strcmp(coder->sim->settings.scheduler, "fifo") == 0)
+	{
+		enqueue_fifo(coder, coder->first_dongle->queue);
+		enqueue_fifo(coder, coder->second_dongle->queue);
+	}
+	else if (strcmp(coder->sim->settings.scheduler, "edf") == 0)
+	{
+		enqueue_edf(coder->first_dongle->queue, &coder->sim->settings, coder);
+		enqueue_edf(coder->second_dongle->queue, &coder->sim->settings, coder);
+	}
+}
+
+void	enqueue_edf(t_queue *queue, t_settings *settings, t_coder *coder)
 {
 	long	deadline1;
 	long	deadline2;
@@ -57,7 +71,7 @@ void	push_and_fix(t_queue *queue, t_settings *settings, t_coder *coder)
 	}
 }
 
-void	push(t_queue *queue, t_coder *coder)
+void	enqueue_fifo(t_coder *coder, t_queue *queue)
 {
 	if (queue->size == queue->capacity)
 	{

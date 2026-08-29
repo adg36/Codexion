@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/28 16:26:39 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/29 12:07:41 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,9 @@ int				create_threads(
 int				join_threads(t_settings *settings, t_program *simulation);
 long			get_timestamp(struct timeval start);
 struct timespec	build_deadline(long remaining_ms);
-// int				dongles_are_unavailable(struct timeval start, t_coder *data);
+int				dongles_are_unavailable(struct timeval start, t_coder *data);
 int				get_dongles(struct timeval start, t_coder *data);
-// void			assign_dongles(t_coder *coder);
+void			assign_dongles(t_coder *coder);
 void			compile(t_coder *data);
 void			release_dongles(struct timeval start, t_coder *data);
 void			debug(struct timeval start, int time_to_debug, t_coder *data);
@@ -126,14 +126,14 @@ long			find_nearest_burnout(t_program *simulation);
 int				all_compiles_completed(t_program *simulation);
 void			print_logs(struct timeval start, t_coder *coder, char *message);
 void			swap(int *a, int *b);
-void			push_and_fix(t_queue *queue, t_settings *settings, t_coder *coder);
-void			push(t_queue *queue, t_coder *coder);
+void			enqueue(t_coder *coder);
+void			enqueue_edf(t_queue *queue, t_settings *settings, t_coder *coder);
+void			enqueue_fifo(t_coder *coder, t_queue *queue);
 int				pop_left(t_queue *queue);
 int				pop_right(t_queue *queue);
 int				first_in_line(t_queue *queue);
-int				has_priority(t_coder *coder, t_dongle *dongle);
-int				first_dongle_is_unavailable(struct timeval start, t_coder *coder);
-int				second_dongle_is_unavailable(struct timeval start, t_coder *coder);
+int				has_priority(t_coder *coder);
+int				dongle_is_unavailable(struct timeval start, t_coder *coder, t_dongle *dongle);
 void			grab_dongle(t_coder *coder, t_dongle *dongle);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:35:34 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 14:18:03 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/29 08:55:05 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	*monitor(void *arg)
 			nearest_burnout = find_nearest_burnout(simulation);
 	}
 	pthread_mutex_unlock(&simulation->mutex_monitor);
+	(void)rc;
 	return (NULL);
 }
 
@@ -71,9 +72,7 @@ long	find_nearest_burnout(t_program *simulation)
 	int		i;
 	int		nearest_deadline;
 	int		coder_deadline;
-	long	time_in_ms;
 
-	time_in_ms = get_timestamp(simulation->start);
 	i = 0;
 	nearest_deadline = simulation->coders[0].begin_of_last_compile + simulation->settings.time_to_burnout;
 	while (i < simulation->settings.number_of_coders)
