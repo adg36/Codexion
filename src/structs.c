@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/28 16:08:49 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/30 10:41:12 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings, t_program *simulatio
 		}
 		coders[i].begin_of_last_compile = 0;
 		coders[i].total_compiles = 0;
+		coders[i].consecutive_losses = 0;
 		i++;
 	}
 	return (coders);

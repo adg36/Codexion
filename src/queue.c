@@ -67,7 +67,18 @@ void	enqueue_edf(t_queue *queue, t_program *simulation, t_coder *coder)
 		deadline1 = simulation->coders[queue->array[0] - 1].begin_of_last_compile + simulation->settings.time_to_burnout;
 		deadline2 = simulation->coders[queue->array[1] - 1].begin_of_last_compile + simulation->settings.time_to_burnout;
 		if (deadline2 < deadline1)
+		{
 			swap(&queue->array[0], &queue->array[1]);
+			simulation->coders[queue->array[1] - 1].consecutive_losses++;
+		}
+		else if (deadline1 == deadline2)
+		{
+			if (simulation->coders[queue->array[0] - 1].consecutive_losses < simulation->coders[queue->array[1] - 1].consecutive_losses)
+			{
+				swap(&queue->array[0], &queue->array[1]);
+				simulation->coders[queue->array[1] - 1].consecutive_losses++;
+			}
+		}
 	}
 }
 
@@ -100,22 +111,6 @@ int	pop_left(t_queue *queue)
 	queue->array[0] = queue->array[1];
 	queue->size--;
 	return (root);
-}
-
-int	pop_right(t_queue *queue)
-{
-	if (queue->size <= 0)
-	{
-		fprintf(stderr, "Queue is already empty\n");
-		return (0);
-	}
-	if (queue->size == 1)
-	{
-		queue->size--;
-		return (queue->array[0]);
-	}
-	queue->size--;
-	return (queue->array[1]);
 }
 
 int	first_in_line(t_queue *queue)

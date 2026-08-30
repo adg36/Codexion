@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/29 14:09:16 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/30 11:25:54 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ typedef struct s_coder
 	t_dongle	*second_dongle;
 	long		begin_of_last_compile;
 	int			total_compiles;
+	int			consecutive_losses;
 }	t_coder;
 
 typedef struct s_program
@@ -135,5 +136,7 @@ int				first_in_line(t_queue *queue);
 int				has_priority(t_coder *coder);
 int				dongle_is_unavailable(struct timeval start, t_coder *coder, t_dongle *dongle);
 void			grab_dongle(t_coder *coder, t_dongle *dongle);
+// void 			maybe_promote(t_dongle *dongle, t_coder *coder);
+// int 			leader_is_live(t_coder *leader);
 
 #endif

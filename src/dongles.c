@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/29 16:29:05 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/30 11:18:25 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,20 +93,36 @@ void	release_dongles(struct timeval start, t_coder *coder)
 
 int	has_priority(t_coder *coder)
 {
+	// maybe_promote(coder->first_dongle, coder);
+	// maybe_promote(coder->second_dongle, coder);
 	if (first_in_line(coder->first_dongle->queue) == coder->id
 	&& first_in_line(coder->second_dongle->queue) == coder->id)
 		return (1);
-	/*else if ((first_in_line(coder->first_dongle->queue) == coder->id
-	&& coder->second_dongle->queue->array[1] == coder->id))
-	{
-		swap(&coder->second_dongle->queue->array[1], &coder->second_dongle->queue->array[0]);
-		return (1);
-	}
-	else if ((first_in_line(coder->second_dongle->queue) == coder->id
-	&& (coder->first_dongle->queue->array[1] == coder->id)))
-	{
-		swap(&coder->first_dongle->queue->array[1], &coder->first_dongle->queue->array[0]);	
-		return (1);
-	}*/
 	return (0);
 }
+/*
+int leader_is_live(t_coder *leader)
+{
+    if (first_in_line(leader->first_dongle->queue) != leader->id)
+        return (0);
+    if (first_in_line(leader->second_dongle->queue) != leader->id)
+        return (0);
+    if (dongle_is_unavailable(leader->sim->start, leader, leader->first_dongle))
+        return (0);
+    if (dongle_is_unavailable(leader->sim->start, leader, leader->second_dongle))
+        return (0);
+    return (1);
+}
+
+void maybe_promote(t_dongle *dongle, t_coder *coder)
+{
+    int leader_id;
+
+    if (dongle->queue->size < 2)
+        return ;
+    leader_id = dongle->queue->array[0];
+    if (leader_id != coder->id
+        && !leader_is_live(&coder->sim->coders[leader_id - 1]))
+        swap(&dongle->queue->array[0], &dongle->queue->array[1]);
+}
+*/
