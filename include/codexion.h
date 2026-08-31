@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/30 11:25:54 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/31 08:14:03 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,16 +127,14 @@ long			find_nearest_burnout(t_program *simulation);
 int				all_compiles_completed(t_program *simulation);
 void			print_logs(struct timeval start, t_coder *coder, char *message);
 void			swap(int *a, int *b);
+void			pre_enqueue(t_program *simulation);
 void			enqueue(t_coder *coder);
 void			enqueue_edf(t_queue *queue, t_program *simulation, t_coder *coder);
 void			enqueue_fifo(t_coder *coder, t_queue *queue);
 int				pop_left(t_queue *queue);
-int				pop_right(t_queue *queue);
 int				first_in_line(t_queue *queue);
 int				has_priority(t_coder *coder);
 int				dongle_is_unavailable(struct timeval start, t_coder *coder, t_dongle *dongle);
 void			grab_dongle(t_coder *coder, t_dongle *dongle);
-// void 			maybe_promote(t_dongle *dongle, t_coder *coder);
-// int 			leader_is_live(t_coder *leader);
 
 #endif

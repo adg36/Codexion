@@ -17,7 +17,6 @@ t_queue	*create_queue(int capacity)
 	t_queue	*queue;
 
 	queue = malloc(sizeof(t_queue));
-
 	if (!queue)
 	{
 		fprintf(stderr, "Error: Malloc failed.");
@@ -34,8 +33,24 @@ t_queue	*create_queue(int capacity)
 	return (queue);
 }
 
+void	pre_enqueue(t_program *simulation)
+{
+	int	i;
+
+	i = 1;
+	while (i < simulation->settings.number_of_coders)
+	{
+		if (i % 2 != 0)
+			enqueue(&simulation->coders[i - 1]);
+		i++;
+	}
+}
+
 void	enqueue(t_coder *coder)
 {
+	if (first_in_line(coder->first_dongle->queue) == coder->id
+		|| first_in_line(coder->second_dongle->queue) == coder->id)
+		return ;
 	if (strcmp(coder->sim->settings.scheduler, "fifo") == 0)
 	{
 		enqueue_fifo(coder, coder->first_dongle->queue);
@@ -56,10 +71,7 @@ void	enqueue_edf(t_queue *queue, t_program *simulation, t_coder *coder)
 	deadline1 = 0;
 	deadline2 = 0;
 	if (queue->size == queue->capacity)
-	{
-		fprintf(stderr, "Queue overflow\n");
 		return ;
-	}
 	queue->size++;
 	queue->array[queue->size - 1] = coder->id;
 	if (queue->size == QUEUE_CAPACITY)
@@ -85,10 +97,7 @@ void	enqueue_edf(t_queue *queue, t_program *simulation, t_coder *coder)
 void	enqueue_fifo(t_coder *coder, t_queue *queue)
 {
 	if (queue->size == queue->capacity)
-	{
-		fprintf(stderr, "Queue overflow\n");
 		return ;
-	}
 	queue->size++;
 	queue->array[queue->size - 1] = coder->id;
 }
@@ -98,10 +107,7 @@ int	pop_left(t_queue *queue)
 	int	root;
 
 	if (queue->size <= 0)
-	{
-		fprintf(stderr, "Queue is already empty\n");
 		return (0);
-	}
 	if (queue->size == 1)
 	{
 		queue->size--;
@@ -116,9 +122,6 @@ int	pop_left(t_queue *queue)
 int	first_in_line(t_queue *queue)
 {
 	if (queue->size <= 0)
-	{
-		fprintf(stderr, "Queue is empty\n");
 		return (0);
-	}
 	return (queue->array[0]);
 }
