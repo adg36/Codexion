@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 08:25:39 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/31 10:07:22 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ typedef struct s_program
 	pthread_mutex_t	mutex_print;
 	pthread_mutex_t	mutex_monitor;
 	pthread_mutex_t	mutex_compiles;
+	pthread_mutex_t	mutex_sim;
 	pthread_cond_t	cond_dongles;
 	pthread_cond_t	cond_monitor;
 	t_dongle		*dongles;

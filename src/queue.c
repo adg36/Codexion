@@ -76,8 +76,10 @@ void	enqueue_edf(t_queue *queue, t_program *simulation, t_coder *coder)
 	queue->array[queue->size - 1] = coder->id;
 	if (queue->size == QUEUE_CAPACITY)
 	{
+		pthread_mutex_lock(&coder->sim->mutex_compiles);
 		deadline1 = simulation->coders[queue->array[0] - 1].begin_of_last_compile + simulation->settings.time_to_burnout;
 		deadline2 = simulation->coders[queue->array[1] - 1].begin_of_last_compile + simulation->settings.time_to_burnout;
+		pthread_mutex_unlock(&coder->sim->mutex_compiles);
 		if (deadline2 < deadline1)
 		{
 			swap(&queue->array[0], &queue->array[1]);

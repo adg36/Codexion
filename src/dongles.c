@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 08:14:53 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/31 14:29:01 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int	get_dongles(struct timeval start, t_coder *coder)
 	long			time_in_ms;
 	long			remaining_ms;
 	int				rc;
+	int				stop_sim;
 	struct timespec	ts;
 
 	pthread_mutex_lock(&coder->sim->mutex_dongles);
@@ -39,10 +40,13 @@ int	get_dongles(struct timeval start, t_coder *coder)
 	while (dongles_are_unavailable(start, coder) || !has_priority(coder))
 	{
 		time_in_ms = get_timestamp(start);
-		remaining_ms = coder->begin_of_last_compile + coder->sim->settings.time_to_compile + coder->sim->settings.dongle_cooldown - time_in_ms;
+		remaining_ms = coder->first_dongle->began_cooldown + coder->sim->settings.dongle_cooldown - time_in_ms;
 		ts = build_deadline(remaining_ms);
 		rc = pthread_cond_timedwait(&coder->sim->cond_dongles, &coder->sim->mutex_dongles, &ts);
-		if (coder->sim->stop_simulation)
+		pthread_mutex_lock(&coder->sim->mutex_sim);
+		stop_sim = coder->sim->stop_simulation;
+		pthread_mutex_unlock(&coder->sim->mutex_sim);
+		if (stop_sim)
 		{
 			pthread_mutex_unlock(&coder->sim->mutex_dongles);
 			return (0);

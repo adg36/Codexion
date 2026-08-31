@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:35:34 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/29 08:55:05 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/31 14:18:50 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,9 @@ void	*monitor(void *arg)
 		rc = pthread_cond_timedwait(&simulation->cond_monitor, &simulation->mutex_monitor, &ts);
 		if (burnout_detected(simulation) || all_compiles_completed(simulation))
 		{
+			pthread_mutex_lock(&simulation->mutex_sim);
 			simulation->stop_simulation = 1;
+			pthread_mutex_unlock(&simulation->mutex_sim);
 			break ;
 		}
 		else
@@ -53,13 +55,19 @@ int	burnout_detected(t_program *simulation)
 	i = 0;
 	while (i < simulation->settings.number_of_coders)
 	{
+		pthread_mutex_lock(&simulation->mutex_compiles);
 		coder_deadline = simulation->coders[i].begin_of_last_compile + simulation->settings.time_to_burnout;
+		pthread_mutex_unlock(&simulation->mutex_compiles);
 		if (time_in_ms > coder_deadline)
 		{
-			pthread_cond_broadcast(&simulation->cond_dongles);
-			pthread_cond_broadcast(&simulation->cond_monitor);
 			print_logs(simulation->start, &simulation->coders[i], "burned out");
+			pthread_mutex_lock(&simulation->mutex_sim);
 			simulation->stop_simulation = 1;
+			pthread_mutex_unlock(&simulation->mutex_sim);
+			pthread_mutex_lock(&simulation->mutex_dongles);
+			pthread_cond_broadcast(&simulation->cond_dongles);
+			pthread_mutex_unlock(&simulation->mutex_dongles);
+			pthread_cond_broadcast(&simulation->cond_monitor);
 			return (1);
 		}
 		i++;
@@ -74,6 +82,7 @@ long	find_nearest_burnout(t_program *simulation)
 	int		coder_deadline;
 
 	i = 0;
+	pthread_mutex_lock(&simulation->mutex_compiles);
 	nearest_deadline = simulation->coders[0].begin_of_last_compile + simulation->settings.time_to_burnout;
 	while (i < simulation->settings.number_of_coders)
 	{
@@ -82,17 +91,22 @@ long	find_nearest_burnout(t_program *simulation)
 			nearest_deadline = coder_deadline;
 		i++;
 	}
+	pthread_mutex_unlock(&simulation->mutex_compiles);
 	return (nearest_deadline);
 }
 
 int	all_compiles_completed(t_program *simulation)
 {
 	int	i;
+	int	total_comp;
 
 	i = 0;
 	while (i < simulation->settings.number_of_coders)
 	{
-		if (simulation->coders[i].total_compiles < simulation->settings.number_of_compiles_required)
+		pthread_mutex_lock(&simulation->mutex_compiles);
+		total_comp = simulation->coders[i].total_compiles;
+		pthread_mutex_unlock(&simulation->mutex_compiles);
+		if (total_comp < simulation->settings.number_of_compiles_required)
 			return (0);
 		i++;
 	}
