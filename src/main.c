@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 07:36:27 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/31 08:25:16 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int	main(int argc, char **argv)
 	create_threads(&settings, &simulation, coders);
 	join_threads(&settings, &simulation);
 	destroy_mutex_cond(&simulation);
+	free_queues(&settings, dongles);
 	free(simulation.dongles);
 	free(simulation.coders);
 	free(simulation.threads);
