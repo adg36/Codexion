@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 08:29:42 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/31 16:17:25 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,9 @@ t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
 	return (dongles);
 }
 
-t_coder	*init_coders(t_coder *coders, t_settings *settings, t_program *simulation, t_dongle *dongles)
+t_coder	*init_coders(
+	t_coder *coders, t_settings *settings,
+	t_program *simulation, t_dongle *dongles)
 {
 	int	i;
 
@@ -59,13 +61,15 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings, t_program *simulatio
 		coders[i].sim = simulation;
 		if (i == settings->number_of_coders - 1)
 		{
-			coders[i].first_dongle = &(dongles[(i + 1) % settings->number_of_coders]);
+			coders[i].first_dongle = (
+					&(dongles[(i + 1) % settings->number_of_coders]));
 			coders[i].second_dongle = &(dongles[i]);
 		}
 		else
 		{
 			coders[i].first_dongle = &(dongles[i]);
-			coders[i].second_dongle = &(dongles[(i + 1) % settings->number_of_coders]);
+			coders[i].second_dongle = (
+					&(dongles[(i + 1) % settings->number_of_coders]));
 		}
 		coders[i].begin_of_last_compile = 0;
 		coders[i].total_compiles = 0;
@@ -75,7 +79,8 @@ t_coder	*init_coders(t_coder *coders, t_settings *settings, t_program *simulatio
 	return (coders);
 }
 
-void	init_sim(t_program *sim, t_settings *settings, t_coder *coders, t_dongle *dongles)
+void	init_sim(t_program *sim, t_settings *settings,
+			t_coder *coders, t_dongle *dongles)
 {
 	gettimeofday(&sim->start, NULL);
 	sim->threads = NULL;
@@ -93,19 +98,6 @@ void	init_queues(t_settings *settings, t_dongle *dongles)
 	while (i < settings->number_of_coders)
 	{
 		dongles[i].queue = create_queue(QUEUE_CAPACITY);
-		i++;
-	}
-}
-
-void	free_queues(t_settings *settings, t_dongle *dongles)
-{
-	int	i;
-
-	i = 0;
-	while (i < settings->number_of_coders)
-	{
-		free(dongles[i].queue->array);
-		free(dongles[i].queue);
 		i++;
 	}
 }

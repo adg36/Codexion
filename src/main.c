@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 10:07:51 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/31 16:18:52 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,17 +61,21 @@ int	create_threads(t_settings *settings, t_program *simulation, t_coder *coders)
 {
 	int			i;
 
-	simulation->threads = malloc(sizeof(pthread_t) * settings->number_of_coders);
+	simulation->threads = (
+			malloc(sizeof(pthread_t) * settings->number_of_coders));
 	if (!simulation->threads)
 		return (fprintf(stderr, "Error: failed to allocate threads.\n"), 1);
 	i = 0;
 	while (i < settings->number_of_coders)
 	{
-		if (pthread_create(&simulation->threads[i], NULL, routine, (void *) &coders[i]) != 0)
+		if (pthread_create(
+				&simulation->threads[i], NULL,
+				routine, (void *) &coders[i]) != 0)
 			return (fprintf(stderr, "Error creating thread %d\n", i), 1);
 		i++;
 	}
-	if (pthread_create(&simulation->monitor, NULL, monitor, (void *) simulation) != 0)
+	if (pthread_create(
+			&simulation->monitor, NULL, monitor, (void *) simulation) != 0)
 		return (fprintf(stderr, "Error creating monitor thread.\n"), 1);
 	return (0);
 }

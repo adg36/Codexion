@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 10:07:22 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/31 16:21:01 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 typedef struct s_program	t_program;
 typedef struct s_coder		t_coder;
 
-typedef struct	s_queue
+typedef struct s_queue
 {
 	int	*array;
 	int	size;
@@ -130,13 +130,19 @@ void			print_logs(struct timeval start, t_coder *coder, char *message);
 void			swap(int *a, int *b);
 void			pre_enqueue(t_program *simulation);
 void			enqueue(t_coder *coder);
-void			enqueue_edf(t_queue *queue, t_program *simulation, t_coder *coder);
+void			enqueue_edf(
+					t_queue *queue,
+					t_program *simulation,
+					t_coder *coder);
 void			enqueue_fifo(t_coder *coder, t_queue *queue);
 int				pop_left(t_queue *queue);
 int				first_in_line(t_queue *queue);
 int				has_priority(t_coder *coder);
-int				dongle_is_unavailable(struct timeval start, t_coder *coder, t_dongle *dongle);
+int				dongle_is_unavailable(struct timeval start,
+					t_coder *coder, t_dongle *dongle);
 void			grab_dongle(t_coder *coder, t_dongle *dongle);
 void			free_queues(t_settings *settings, t_dongle *dongles);
+int				coder_cycle(t_coder *coder);
+int				stop_simulation(t_coder *coder);
 
 #endif

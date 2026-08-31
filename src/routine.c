@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:16:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 14:46:29 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/08/31 15:37:08 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,35 +25,39 @@ void	*routine(void *data)
 		pthread_mutex_lock(&coder->sim->mutex_sim);
 		stop_sim = coder->sim->stop_simulation;
 		pthread_mutex_unlock(&coder->sim->mutex_sim);
-		if (!stop_sim)
-		{
-			if (!get_dongles(coder->sim->start, coder))
-				return (NULL);
-			else
-			{
-				compile(coder);
-				if (all_compiles_completed(coder->sim))
-				{
-					pthread_mutex_lock(&coder->sim->mutex_sim);
-					coder->sim->stop_simulation = 1;
-					pthread_mutex_unlock(&coder->sim->mutex_sim);
-					return (NULL);
-				}
-				else
-				{
-					release_dongles(coder->sim->start, coder);
-					print_logs(coder->sim->start, coder, "is debugging");
-					usleep(coder->sim->settings.time_to_debug * 1000);
-					print_logs(coder->sim->start, coder, "is refactoring");
-					usleep(coder->sim->settings.time_to_refactor * 1000);
-				}
-			}
-		}
-		else
+		if (stop_sim)
+			return (NULL);
+		if (coder_cycle(coder) == 0)
 			return (NULL);
 		i++;
 	}
 	return (NULL);
+}
+
+int	coder_cycle(t_coder *coder)
+{
+	if (!get_dongles(coder->sim->start, coder))
+		return (0);
+	else
+	{
+		compile(coder);
+		if (all_compiles_completed(coder->sim))
+		{
+			pthread_mutex_lock(&coder->sim->mutex_sim);
+			coder->sim->stop_simulation = 1;
+			pthread_mutex_unlock(&coder->sim->mutex_sim);
+			return (0);
+		}
+		else
+		{
+			release_dongles(coder->sim->start, coder);
+			print_logs(coder->sim->start, coder, "is debugging");
+			usleep(coder->sim->settings.time_to_debug * 1000);
+			print_logs(coder->sim->start, coder, "is refactoring");
+			usleep(coder->sim->settings.time_to_refactor * 1000);
+		}
+	}
+	return (1);
 }
 
 void	compile(t_coder *coder)
@@ -76,11 +80,8 @@ void	compile(t_coder *coder)
 void	print_logs(struct timeval start, t_coder *coder, char *message)
 {
 	long	time_in_ms;
-	// int		stop_sim;
 
 	pthread_mutex_lock(&coder->sim->mutex_sim);
-	// stop_sim = coder->sim->stop_simulation;
-	// pthread_mutex_unlock(&coder->sim->mutex_sim);
 	if (!coder->sim->stop_simulation)
 	{
 		time_in_ms = get_timestamp(start);
