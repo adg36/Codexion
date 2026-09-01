@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/01 11:25:28 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/01 15:48:37 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct s_coder		t_coder;
 
 typedef struct s_queue
 {
-	int	*array;
+	int	*arr;
 	int	size;
 	int	capacity;
 }	t_queue;
@@ -62,7 +62,7 @@ typedef struct s_coder
 	t_dongle	*second_dongle;
 	long		begin_of_last_compile;
 	int			total_compiles;
-	int			consecutive_losses;
+	int			loss;
 }	t_coder;
 
 typedef struct s_program
@@ -83,11 +83,11 @@ typedef struct s_program
 	t_coder			*coders;
 }	t_program;
 
-char			**get_args(int argc, char **argv);
-int				are_args_valid(char **args, int len);
-int				has_invalid_numbers(char **args, int len);
+// arg_checker
+int				are_args_valid(char **args);
+int				has_invalid_numbers(char **args);
 int				has_invalid_scheduler(char *str);
-int				array_len(char **arr);
+
 int				create_threads(
 					t_settings *settings,
 					t_program *simulation,
@@ -105,13 +105,17 @@ void			refactor(
 					struct timeval start,
 					int time_to_refactor,
 					t_coder *data);
+
+// struct initialization
 void			init_settings(t_settings *settings, char **args);
 t_coder			*init_coders(
 					t_coder *coders,
 					t_settings *settings,
 					t_program *simulation,
 					t_dongle *dongles);
-t_dongle		*init_dongles(t_dongle *dongles, t_settings *settings);
+t_dongle		*init_dongles(t_settings *settings);
+void			set_dongles(int i, t_settings *settings,
+					t_coder *coders, t_dongle *dongles);
 void			init_sim(
 					t_program *sim,
 					t_settings *settings,

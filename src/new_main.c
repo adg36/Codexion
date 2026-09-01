@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/01 18:47:05 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/01 15:55:58 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,16 @@ int	main(int argc, char **argv)
 	if (!coders)
 	{
 		free(simulation.dongles);
-		fprintf(stderr, "Error: failed to create coders.\n");
-		return (2);
+		return (fprintf(stderr, "Error: failed to create coders.\n"), 1);
 	}
 	init_queues(&settings, dongles);
 	init_sim(&simulation, &settings, coders, dongles);
 	init_mutex_cond(&simulation);
 	pre_enqueue(&simulation);
-	create_threads(&settings, &simulation, coders);
-	join_threads(&settings, &simulation);
+	if (!create_threads(&settings, &simulation, coders))
+		return (fprintf(stderr, "Error: failed to create threads.\n"), 1);
+	if (!join_threads(&settings, &simulation))
+		return (fprintf(stderr, "Error: failed to join threads.\n"), 1);
 	destroy_mutex_cond(&simulation);
 	free_queues(&settings, dongles);
 	free(simulation.dongles);
@@ -53,24 +54,26 @@ int	main(int argc, char **argv)
 
 int	create_threads(t_settings *settings, t_program *simulation, t_coder *coders)
 {
-	int			i;
+	int	i;
 
 	simulation->threads = (
 			malloc(sizeof(pthread_t) * settings->number_of_coders));
 	if (!simulation->threads)
-		return (fprintf(stderr, "Error: failed to allocate threads.\n"), 1);
+		return (1);
 	i = 0;
 	while (i < settings->number_of_coders)
 	{
-		if (pthread_create(
-				&simulation->threads[i], NULL,
+		if (pthread_create(&simulation->threads[i], NULL,
 				routine, (void *) &coders[i]) != 0)
-			return (fprintf(stderr, "Error creating thread %d\n", i), 1);
+		{
+			// destroy already created threads or join them (??)
+			return (1);
+		}
 		i++;
 	}
 	if (pthread_create(
 			&simulation->monitor, NULL, monitor, (void *) simulation) != 0)
-		return (fprintf(stderr, "Error creating monitor thread.\n"), 1);
+		return (1);
 	return (0);
 }
 
@@ -82,10 +85,11 @@ int	join_threads(t_settings *settings, t_program *simulation)
 	while (i < settings->number_of_coders)
 	{
 		if (pthread_join(simulation->threads[i], NULL) != 0)
-			return (fprintf(stderr, "Error joining thread %d\n", i), 1);
+			return (1);
 		i++;
 	}
-	pthread_join(simulation->monitor, NULL);
+	if (pthread_join(simulation->monitor, NULL) != 0)
+		return (1);
 	return (0);
 }
 

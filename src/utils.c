@@ -6,33 +6,11 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:45 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 16:08:13 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/01 15:14:19 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
-int	array_len(char **arr)
-{
-	int	i;
-
-	i = 0;
-	while (*arr)
-	{
-		i++;
-		arr++;
-	}
-	return (i);
-}
-
-void	swap(int *a, int *b)
-{
-	int	temp;
-
-	temp = *a;
-	*a = *b;
-	*b = temp;
-}
 
 int	has_priority(t_coder *coder)
 {
@@ -51,10 +29,10 @@ int	pop_left(t_queue *queue)
 	if (queue->size == 1)
 	{
 		queue->size--;
-		return (queue->array[0]);
+		return (queue->arr[0]);
 	}
-	root = queue->array[0];
-	queue->array[0] = queue->array[1];
+	root = queue->arr[0];
+	queue->arr[0] = queue->arr[1];
 	queue->size--;
 	return (root);
 }
@@ -63,5 +41,22 @@ int	first_in_line(t_queue *queue)
 {
 	if (queue->size <= 0)
 		return (0);
-	return (queue->array[0]);
+	return (queue->arr[0]);
+}
+
+void	set_dongles(int i, t_settings *settings,
+	t_coder *coders, t_dongle *dongles)
+{
+	if (i == settings->number_of_coders - 1)
+	{
+		coders[i].first_dongle = (
+				&(dongles[(i + 1) % settings->number_of_coders]));
+		coders[i].second_dongle = &(dongles[i]);
+	}
+	else
+	{
+		coders[i].first_dongle = &(dongles[i]);
+		coders[i].second_dongle = (
+				&(dongles[(i + 1) % settings->number_of_coders]));
+	}
 }

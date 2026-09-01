@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/31 16:16:16 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 16:17:16 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/01 14:46:48 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	free_queues(t_settings *settings, t_dongle *dongles)
 	i = 0;
 	while (i < settings->number_of_coders)
 	{
-		free(dongles[i].queue->array);
+		free(dongles[i].queue->arr);
 		free(dongles[i].queue);
 		i++;
 	}

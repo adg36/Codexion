@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 16:17:25 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/01 15:24:56 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,10 @@ void	init_settings(t_settings *settings, char **args)
 	settings->scheduler = args[7];
 }
 
-t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
+t_dongle	*init_dongles(t_settings *settings)
 {
-	int		i;
+	int			i;
+	t_dongle	*dongles;
 
 	dongles = malloc(sizeof(t_dongle) * settings->number_of_coders);
 	if (!dongles)
@@ -45,8 +46,7 @@ t_dongle	*init_dongles(t_dongle *dongles, t_settings *settings)
 	return (dongles);
 }
 
-t_coder	*init_coders(
-	t_coder *coders, t_settings *settings,
+t_coder	*init_coders(t_coder *coders, t_settings *settings,
 	t_program *simulation, t_dongle *dongles)
 {
 	int	i;
@@ -59,21 +59,10 @@ t_coder	*init_coders(
 	{
 		coders[i].id = i + 1;
 		coders[i].sim = simulation;
-		if (i == settings->number_of_coders - 1)
-		{
-			coders[i].first_dongle = (
-					&(dongles[(i + 1) % settings->number_of_coders]));
-			coders[i].second_dongle = &(dongles[i]);
-		}
-		else
-		{
-			coders[i].first_dongle = &(dongles[i]);
-			coders[i].second_dongle = (
-					&(dongles[(i + 1) % settings->number_of_coders]));
-		}
+		set_dongles(i, settings, coders, dongles);
 		coders[i].begin_of_last_compile = 0;
 		coders[i].total_compiles = 0;
-		coders[i].consecutive_losses = 0;
+		coders[i].loss = 0;
 		i++;
 	}
 	return (coders);

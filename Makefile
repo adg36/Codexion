@@ -6,7 +6,7 @@
 #    By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/07/20 15:06:44 by razevedo          #+#    #+#              #
-#    Updated: 2026/08/31 16:16:51 by razevedo         ###   ########.fr        #
+#    Updated: 2026/09/01 15:12:23 by razevedo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,10 +20,11 @@ SRC = src/clean_up.c \
 	  src/dongles.c \
 	  src/main.c \
 	  src/monitor.c \
-	  src/parser.c \
+	  src/arg_checker.c \
 	  src/queue.c \
 	  src/routine.c \
 	  src/structs.c \
+	  src/swap.c \
 	  src/time.c \
 	  src/utils.c
 
