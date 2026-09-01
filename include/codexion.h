@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 16:21:01 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/01 11:25:28 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,5 +144,6 @@ void			grab_dongle(t_coder *coder, t_dongle *dongle);
 void			free_queues(t_settings *settings, t_dongle *dongles);
 int				coder_cycle(t_coder *coder);
 int				stop_simulation(t_coder *coder);
+void			swap_if_needed(t_program *simulation, t_queue *queue);
 
 #endif

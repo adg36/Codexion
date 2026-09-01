@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/26 11:48:53 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 16:13:26 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/01 13:56:10 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,40 +65,46 @@ void	enqueue(t_coder *coder)
 
 void	enqueue_edf(t_queue *queue, t_program *simulation, t_coder *coder)
 {
-	long	deadline1;
-	long	deadline2;
-
-	deadline1 = 0;
-	deadline2 = 0;
 	if (queue->size == queue->capacity)
 		return ;
 	queue->size++;
 	queue->array[queue->size - 1] = coder->id;
 	if (queue->size == QUEUE_CAPACITY)
+		swap_if_needed(simulation, queue);
+}
+
+void	swap_if_needed(t_program *simulation, t_queue *queue)
+{
+	long	deadline1;
+	long	deadline2;
+
+	deadline1 = 0;
+	deadline2 = 0;
+	pthread_mutex_lock(&simulation->mutex_compiles);
+	deadline1 = (
+			simulation->coders[queue->array[0] - 1].begin_of_last_compile
+			+ simulation->settings.time_to_burnout);
+	deadline2 = (
+			simulation->coders[queue->array[1] - 1].begin_of_last_compile
+			+ simulation->settings.time_to_burnout);
+	if (deadline2 < deadline1)
 	{
-		pthread_mutex_lock(&simulation->mutex_compiles);
-		deadline1 = (
-				simulation->coders[queue->array[0] - 1].begin_of_last_compile
-				+ simulation->settings.time_to_burnout);
-		deadline2 = (
-				simulation->coders[queue->array[1] - 1].begin_of_last_compile
-				+ simulation->settings.time_to_burnout);
-		if (deadline2 < deadline1)
+		swap(&queue->array[0], &queue->array[1]);
+		simulation->coders[queue->array[1] - 1].consecutive_losses++;
+	}
+	else if (deadline1 == deadline2)
+	{
+		if (simulation->coders[queue->array[0] - 1].consecutive_losses
+			< simulation->coders[queue->array[1] - 1].consecutive_losses)
 		{
 			swap(&queue->array[0], &queue->array[1]);
 			simulation->coders[queue->array[1] - 1].consecutive_losses++;
 		}
-		else if (deadline1 == deadline2)
-		{
-			if (simulation->coders[queue->array[0] - 1].consecutive_losses
-				< simulation->coders[queue->array[1] - 1].consecutive_losses)
-			{
-				swap(&queue->array[0], &queue->array[1]);
-				simulation->coders[queue->array[1] - 1].consecutive_losses++;
-			}
-		}
-		pthread_mutex_unlock(&simulation->mutex_compiles);
+		else if (simulation->coders[queue->array[0] - 1].consecutive_losses
+			>= simulation->coders[queue->array[1] - 1].consecutive_losses)
+			simulation->coders[queue->array[1] - 1].consecutive_losses++;
 	}
+	pthread_mutex_unlock(&simulation->mutex_compiles);
 }
 
 void	enqueue_fifo(t_coder *coder, t_queue *queue)

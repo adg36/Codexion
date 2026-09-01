@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:33 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/05 10:20:39 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/01 13:58:37 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,11 @@ char	**get_args(int argc, char **argv)
 
 int	are_args_valid(char **args, int len)
 {
+	if (atoi(args[0]) <= 0)
+	{
+		printf("There must be at least one coder.\n");
+		return (0);
+	}
 	if (has_invalid_numbers(args, len - 1))
 		return (0);
 	if (has_invalid_scheduler(args[7]))

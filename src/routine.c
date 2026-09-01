@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:16:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 15:37:08 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/01 13:42:01 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,13 @@ void	compile(t_coder *coder)
 	pthread_mutex_lock(&coder->sim->mutex_compiles);
 	coder->begin_of_last_compile = time_in_ms;
 	pthread_mutex_unlock(&coder->sim->mutex_compiles);
-	pthread_mutex_lock(&coder->sim->mutex_monitor);
-	pthread_cond_broadcast(&coder->sim->cond_monitor);
-	pthread_mutex_unlock(&coder->sim->mutex_monitor);
 	usleep(coder->sim->settings.time_to_compile * 1000);
 	pthread_mutex_lock(&coder->sim->mutex_compiles);
 	coder->total_compiles++;
 	pthread_mutex_unlock(&coder->sim->mutex_compiles);
+	pthread_mutex_lock(&coder->sim->mutex_monitor);
+	pthread_cond_broadcast(&coder->sim->cond_monitor);
+	pthread_mutex_unlock(&coder->sim->mutex_monitor);
 }
 
 void	print_logs(struct timeval start, t_coder *coder, char *message)
