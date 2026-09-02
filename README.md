@@ -142,7 +142,7 @@ For EDF scheduling, the coder with the earliest compilation deadline is prioriti
 
 ### 3. Waiting for both dongles
 
-A coder must acquire both of its required dongles before compiling. It cannot compile after acquiring only one dongle.
+A coder must acquire both of its required dongles before compiling. It either acquires both dongles or none. It cannot grab only one dongle.
 
 The arbitration mechanism therefore checks the coder's position in the queues of both required dongles before granting access.
 
