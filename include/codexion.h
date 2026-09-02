@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/02 14:30:44 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/02 14:41:00 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,42 +92,46 @@ int				has_invalid_scheduler(char *str);
 // main
 int				create_threads(t_settings *settings, t_program *simulation);
 void			join_threads(t_settings *settings, t_program *simulation);
+void			free_queues(t_settings *settings, t_dongle *dongles);
 void			clean_up(t_settings *settings, t_program *simulation);
+
+// structs
+void			init_settings(t_settings *settings, char **args);
+t_coder			*init_coders(
+					t_coder *coders, t_settings *settings,
+					t_program *simulation, t_dongle *dongles);
+t_dongle		*init_dongles(t_settings *settings);
+void			init_sim(
+					t_program *sim, t_settings *settings,
+					t_coder *coders, t_dongle *dongles);
+void			init_queues(t_settings *settings, t_dongle *dongles);
+
+// routine
+void			*routine(void *data);
+int				coder_cycle(t_coder *coder);
+void			compile(t_coder *data);
+void			print_logs(struct timeval start, t_coder *coder, char *message);
+
+// simulation
+int				init_program(t_settings *settings, t_program *simulation);
+void			stop_simulation(t_program *simulation);
+int				simulation_stopped(t_coder *coder);
+
+// time
 long			get_timestamp(struct timeval start);
 struct timespec	build_deadline(long remaining_ms);
+
+// dongles
+int				dongle_is_unavailable(struct timeval start,
+					t_coder *coder, t_dongle *dongle);
 int				dongles_are_unavailable(struct timeval start, t_coder *data);
 int				get_dongles(struct timeval start, t_coder *data);
 void			assign_dongles(t_coder *coder);
-void			compile(t_coder *data);
 void			release_dongles(struct timeval start, t_coder *data);
-void			debug(struct timeval start, int time_to_debug, t_coder *data);
-void			refactor(
-					struct timeval start,
-					int time_to_refactor,
-					t_coder *data);
-void			stop_simulation(t_program *simulation);
 
-// struct initialization
-void			init_settings(t_settings *settings, char **args);
-t_coder			*init_coders(
-					t_coder *coders,
-					t_settings *settings,
-					t_program *simulation,
-					t_dongle *dongles);
-t_dongle		*init_dongles(t_settings *settings);
-void			set_dongles(int i, t_settings *settings,
-					t_coder *coders, t_dongle *dongles);
-void			init_sim(
-					t_program *sim,
-					t_settings *settings,
-					t_coder *coders,
-					t_dongle *dongles);
+//mutexes
 void			init_mutex_cond(t_program *simulation);
-void			init_queues(t_settings *settings, t_dongle *dongles);
-int				init_program(t_settings *settings, t_program *simulation);
-t_queue			*create_queue(int capacity);
 void			destroy_mutex_cond(t_program *simulation);
-void			*routine(void *data);
 
 // monitor
 void			*monitor(void *arg);
@@ -136,9 +140,12 @@ int				burnout_detected(t_program *simulation);
 long			find_nearest_burnout(t_program *simulation);
 int				all_compiles_completed(t_program *simulation);
 
-// routine
-void			print_logs(struct timeval start, t_coder *coder, char *message);
+// swap
 void			swap(int *a, int *b);
+void			swap_if_needed(t_program *simulation, t_queue *queue);
+
+// queue
+t_queue			*create_queue(int capacity);
 void			pre_enqueue(t_program *simulation);
 void			enqueue(t_coder *coder);
 void			enqueue_edf(
@@ -146,15 +153,12 @@ void			enqueue_edf(
 					t_program *simulation,
 					t_coder *coder);
 void			enqueue_fifo(t_coder *coder, t_queue *queue);
+
+//priorities
 int				pop_left(t_queue *queue);
 int				first_in_line(t_queue *queue);
 int				has_priority(t_coder *coder);
-int				dongle_is_unavailable(struct timeval start,
-					t_coder *coder, t_dongle *dongle);
-void			grab_dongle(t_coder *coder, t_dongle *dongle);
-void			free_queues(t_settings *settings, t_dongle *dongles);
-int				coder_cycle(t_coder *coder);
-int				simulation_stopped(t_coder *coder);
-void			swap_if_needed(t_program *simulation, t_queue *queue);
+void			set_dongles(int i, t_settings *settings,
+					t_coder *coders, t_dongle *dongles);
 
 #endif
