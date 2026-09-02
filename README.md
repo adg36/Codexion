@@ -107,7 +107,7 @@ Several tools were used to verify the implementation:
 - **Helgrind** — additional pthread synchronization analysis.
 - **GDB** — debugging segmentation faults and thread behaviour.
 
-The project was tested using both the evaluation tests and an independent tester.
+The project was thoroughly tested using an independent tester.
 
 ### Known issue
 
