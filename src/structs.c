@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/01 15:24:56 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/02 13:54:52 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ void	init_sim(t_program *sim, t_settings *settings,
 	sim->coders = coders;
 	sim->dongles = dongles;
 	sim->stop_simulation = 0;
+	sim->monitor_created = 0;
 }
 
 void	init_queues(t_settings *settings, t_dongle *dongles)

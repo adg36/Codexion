@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/01 15:48:37 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/02 13:59:45 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ typedef struct s_program
 	int				stop_simulation;
 	struct timeval	start;
 	t_coder			*coders;
+	int				monitor_created;
 }	t_program;
 
 // arg_checker
@@ -88,11 +89,10 @@ int				are_args_valid(char **args);
 int				has_invalid_numbers(char **args);
 int				has_invalid_scheduler(char *str);
 
-int				create_threads(
-					t_settings *settings,
-					t_program *simulation,
-					t_coder *coders);
-int				join_threads(t_settings *settings, t_program *simulation);
+// main
+int				create_threads(t_settings *settings, t_program *simulation);
+void			join_threads(t_settings *settings, t_program *simulation);
+void			clean_up(t_settings *settings, t_program *simulation);
 long			get_timestamp(struct timeval start);
 struct timespec	build_deadline(long remaining_ms);
 int				dongles_are_unavailable(struct timeval start, t_coder *data);
@@ -123,6 +123,7 @@ void			init_sim(
 					t_dongle *dongles);
 void			init_mutex_cond(t_program *simulation);
 void			init_queues(t_settings *settings, t_dongle *dongles);
+int				init_program(t_settings *settings, t_program *simulation);
 t_queue			*create_queue(int capacity);
 void			destroy_mutex_cond(t_program *simulation);
 void			*routine(void *data);
