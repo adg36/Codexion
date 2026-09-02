@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/26 11:48:53 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/01 14:56:29 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/02 16:28:16 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,11 @@ void	pre_enqueue(t_program *simulation)
 	while (i < simulation->settings.number_of_coders)
 	{
 		if (i % 2 != 0)
+		{
+			pthread_mutex_lock(&simulation->mutex_dongles);
 			enqueue(&simulation->coders[i - 1]);
+			pthread_mutex_unlock(&simulation->mutex_dongles);
+		}
 		i++;
 	}
 }
