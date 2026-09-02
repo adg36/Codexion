@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:35:34 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/31 16:20:10 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/02 14:28:42 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,36 @@
 
 void	*monitor(void *arg)
 {
-	t_program		*simulation;
+	t_program		*sim;
 	long			nearest_burnout;
-	long			remaining_ms;
-	struct timespec	ts;
-	int				rc;
-	long			time_in_ms;
 
-	simulation = (t_program *)arg;
-	pthread_mutex_lock(&simulation->mutex_monitor);
-	nearest_burnout = find_nearest_burnout(simulation);
+	sim = (t_program *)arg;
+	pthread_mutex_lock(&sim->mutex_monitor);
+	nearest_burnout = find_nearest_burnout(sim);
 	while (1)
 	{
-		time_in_ms = get_timestamp(simulation->start);
-		remaining_ms = nearest_burnout - time_in_ms;
-		ts = build_deadline(remaining_ms);
-		rc = pthread_cond_timedwait(
-				&simulation->cond_monitor,
-				&simulation->mutex_monitor, &ts);
-		if (burnout_detected(simulation) || all_compiles_completed(simulation))
+		wait_until_burnout(sim, nearest_burnout);
+		if (burnout_detected(sim) || all_compiles_completed(sim))
 		{
-			pthread_mutex_lock(&simulation->mutex_sim);
-			simulation->stop_simulation = 1;
-			pthread_mutex_unlock(&simulation->mutex_sim);
+			stop_simulation(sim);
 			break ;
 		}
 		else
-			nearest_burnout = find_nearest_burnout(simulation);
+			nearest_burnout = find_nearest_burnout(sim);
 	}
-	pthread_mutex_unlock(&simulation->mutex_monitor);
-	(void)rc;
+	pthread_mutex_unlock(&sim->mutex_monitor);
 	return (NULL);
+}
+
+int	wait_until_burnout(t_program *sim, long nearest_burnout)
+{
+	long			remaining_ms;
+	struct timespec	ts;
+
+	remaining_ms = nearest_burnout - get_timestamp(sim->start);
+	ts = build_deadline(remaining_ms);
+	return (pthread_cond_timedwait(&sim->cond_monitor,
+			&sim->mutex_monitor, &ts));
 }
 
 int	burnout_detected(t_program *simulation)
@@ -64,9 +63,7 @@ int	burnout_detected(t_program *simulation)
 		if (time_in_ms > coder_deadline)
 		{
 			print_logs(simulation->start, &simulation->coders[i], "burned out");
-			pthread_mutex_lock(&simulation->mutex_sim);
-			simulation->stop_simulation = 1;
-			pthread_mutex_unlock(&simulation->mutex_sim);
+			stop_simulation(simulation);
 			pthread_mutex_lock(&simulation->mutex_dongles);
 			pthread_cond_broadcast(&simulation->cond_dongles);
 			pthread_mutex_unlock(&simulation->mutex_dongles);
@@ -116,14 +113,4 @@ int	all_compiles_completed(t_program *simulation)
 		i++;
 	}
 	return (1);
-}
-
-int	stop_simulation(t_coder *coder)
-{
-	int	stop;
-
-	pthread_mutex_lock(&coder->sim->mutex_sim);
-	stop = coder->sim->stop_simulation;
-	pthread_mutex_unlock(&coder->sim->mutex_sim);
-	return (stop);
 }

@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:16:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/01 13:42:01 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/02 14:17:31 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,7 @@ int	coder_cycle(t_coder *coder)
 		compile(coder);
 		if (all_compiles_completed(coder->sim))
 		{
-			pthread_mutex_lock(&coder->sim->mutex_sim);
-			coder->sim->stop_simulation = 1;
-			pthread_mutex_unlock(&coder->sim->mutex_sim);
+			stop_simulation(coder->sim);
 			return (0);
 		}
 		else

@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/02 14:02:52 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/02 14:20:47 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,28 +36,6 @@ int	main(int argc, char **argv)
 	}
 	join_threads(&settings, &simulation);
 	clean_up(&settings, &simulation);
-	return (0);
-}
-
-int	init_program(t_settings *settings, t_program *simulation)
-{
-	t_coder		*coders;
-	t_dongle	*dongles;
-
-	coders = NULL;
-	dongles = init_dongles(settings);
-	if (!dongles)
-		return (fprintf(stderr, "Error: failed to create dongles.\n"), 1);
-	coders = init_coders(coders, settings, simulation, dongles);
-	if (!coders)
-	{
-		free(simulation->dongles);
-		return (fprintf(stderr, "Error: failed to create coders.\n"), 1);
-	}
-	init_queues(settings, dongles);
-	init_sim(simulation, settings, coders, dongles);
-	init_mutex_cond(simulation);
-	pre_enqueue(simulation);
 	return (0);
 }
 
@@ -99,6 +77,19 @@ void	join_threads(t_settings *settings, t_program *simulation)
 	}
 	if (simulation->monitor_created == 1)
 		pthread_join(simulation->monitor, NULL);
+}
+
+void	free_queues(t_settings *settings, t_dongle *dongles)
+{
+	int	i;
+
+	i = 0;
+	while (i < settings->number_of_coders)
+	{
+		free(dongles[i].queue->arr);
+		free(dongles[i].queue);
+		i++;
+	}
 }
 
 void	clean_up(t_settings *settings, t_program *simulation)

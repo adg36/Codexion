@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/02 13:59:45 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/02 14:30:44 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void			refactor(
 					struct timeval start,
 					int time_to_refactor,
 					t_coder *data);
+void			stop_simulation(t_program *simulation);
 
 // struct initialization
 void			init_settings(t_settings *settings, char **args);
@@ -127,10 +128,15 @@ int				init_program(t_settings *settings, t_program *simulation);
 t_queue			*create_queue(int capacity);
 void			destroy_mutex_cond(t_program *simulation);
 void			*routine(void *data);
+
+// monitor
 void			*monitor(void *arg);
+int				wait_until_burnout(t_program *sim, long nearest_burnout);
 int				burnout_detected(t_program *simulation);
 long			find_nearest_burnout(t_program *simulation);
 int				all_compiles_completed(t_program *simulation);
+
+// routine
 void			print_logs(struct timeval start, t_coder *coder, char *message);
 void			swap(int *a, int *b);
 void			pre_enqueue(t_program *simulation);
@@ -148,7 +154,7 @@ int				dongle_is_unavailable(struct timeval start,
 void			grab_dongle(t_coder *coder, t_dongle *dongle);
 void			free_queues(t_settings *settings, t_dongle *dongles);
 int				coder_cycle(t_coder *coder);
-int				stop_simulation(t_coder *coder);
+int				simulation_stopped(t_coder *coder);
 void			swap_if_needed(t_program *simulation, t_queue *queue);
 
 #endif

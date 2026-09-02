@@ -6,11 +6,24 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/01 14:56:29 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/02 14:20:08 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
+
+int	dongle_is_unavailable(
+	struct timeval start,
+	t_coder *coder,
+	t_dongle *dongle)
+{
+	if ((!dongle->is_available
+			|| (!dongle->never_used
+				&& get_timestamp(start) <= dongle->began_cooldown
+				+ coder->sim->settings.dongle_cooldown)))
+		return (1);
+	return (0);
+}
 
 int	dongles_are_unavailable(struct timeval start, t_coder *coder)
 {
@@ -38,7 +51,7 @@ int	get_dongles(struct timeval start, t_coder *coder)
 		ts = build_deadline(remaining_ms);
 		rc = pthread_cond_timedwait(
 				&coder->sim->cond_dongles, &coder->sim->mutex_dongles, &ts);
-		if (stop_simulation(coder))
+		if (simulation_stopped(coder))
 		{
 			pthread_mutex_unlock(&coder->sim->mutex_dongles);
 			return (0);
@@ -48,19 +61,6 @@ int	get_dongles(struct timeval start, t_coder *coder)
 	pthread_mutex_unlock(&coder->sim->mutex_dongles);
 	(void)rc;
 	return (1);
-}
-
-int	dongle_is_unavailable(
-	struct timeval start,
-	t_coder *coder,
-	t_dongle *dongle)
-{
-	if ((!dongle->is_available
-			|| (!dongle->never_used
-				&& get_timestamp(start) <= dongle->began_cooldown
-				+ coder->sim->settings.dongle_cooldown)))
-		return (1);
-	return (0);
 }
 
 void	assign_dongles(t_coder *coder)
