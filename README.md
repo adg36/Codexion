@@ -107,13 +107,45 @@ Several tools were used to verify the implementation:
 - **Helgrind** — additional pthread synchronization analysis.
 - **GDB** — debugging segmentation faults and thread behaviour.
 
-The project was thoroughly tested using an independent tester.
+### References
+
+Throughout the process of building this project, I used a number of available resources, including:
+
+- YouTube — CodeVault's course on Unix Threads in C.
+- GeeksForGeeks — articles about threads and implementation of priority queues in C.
+- Wikipedia — page about the Dining Philosophers problem.
+- https://medium.com/@yassinx4002/dining-philosophers-in-c-from-theory-to-practice-28582180aa37
+
+### AI usage
+
+AI was used as a learning and debugging aid throughout the project. It was mainly used to:
+- clarify concepts related to POSIX threads, mutexes, condition variables, scheduling and concurrency;
+- discuss and reason about the project architecture and synchronization strategy before and during implementation;
+- analyse compiler, Valgrind, Helgrind, DRD and TSan output and help identify possible sources of errors;
+- investigate edge cases and design additional stress tests for the FIFO and EDF schedulers;
+- review specific pieces of code for possible race conditions, dadlocks, missed wake-ups and resource-management issues;
+- help interpret unexpected behaviour and compare possible implementation approaches;
+- assist with documentation, including the structure and wording of this README.
+
+The architecture and the implementation itself are my own. No Copilot was used.
 
 ### Known issue
 
-Helgrind reports a `dubious` warning related to a condition-variable timed wait. The warning has not been reproduced by ThreadSanitizer or DRD, and the program passes the other synchronization and evaluation tests.
+## Helgrind warning with `pthread_cond_timedwait`
 
-This issue has been left under investigation.
+When running the program with Helgrind, the following warning may be reported:
+
+`Thread #X: pthread_cond_{signal,broadcast}: associated lock is not held by calling thread`
+
+The warning originates from the internal execution of `pthread_cond_timedwait()` rather than from an explicit `pthread_cond_signal()` or `pthread_cond_broadcast()` call in the program.
+
+The condition variables used by the program follow the standard POSIX pattern: the associated mutex is locked while checking/updating the condition and while signalling or broadcasting, and the same mutex is passed to `pthread_cond_timedwait()`.
+
+This warning is believed to be a Helgrind false positive. The official Valgrind documentation notes that Helgrind only partially handles POSIX condition variables and explicitly documents cases where this can result in false-positive reports:
+	“Helgrind only partially correctly handles POSIX condition variables.”
+
+It further states that missing synchronisation events can cause Helgrind to report false positives.
+Reference: Valgrind Helgrind Manual — Hints and Tips for Effective Use of Helgrind
 
 ---
 
