@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/26 11:48:53 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/02 16:28:16 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 15:22:48 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ t_queue	*create_queue(int capacity)
 	queue->arr = malloc(capacity * sizeof(int));
 	if (!queue->arr)
 	{
+		free(queue);
 		fprintf(stderr, "Error: Malloc failed.");
 		return (NULL);
 	}

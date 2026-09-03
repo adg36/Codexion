@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/02 14:19:17 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/02 14:21:43 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 15:25:53 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,12 @@ void	stop_simulation(t_program *simulation)
 	pthread_mutex_unlock(&simulation->mutex_sim);
 }
 
-int	simulation_stopped(t_coder *coder)
+int	simulation_stopped(t_program *simulation)
 {
 	int	stop;
 
-	pthread_mutex_lock(&coder->sim->mutex_sim);
-	stop = coder->sim->stop_simulation;
-	pthread_mutex_unlock(&coder->sim->mutex_sim);
+	pthread_mutex_lock(&simulation->mutex_sim);
+	stop = simulation->stop_simulation;
+	pthread_mutex_unlock(&simulation->mutex_sim);
 	return (stop);
 }

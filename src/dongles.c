@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/02 16:44:50 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 15:25:18 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	get_dongles(struct timeval start, t_coder *coder)
 		ts = build_deadline(remaining_ms);
 		rc = pthread_cond_timedwait(
 				&coder->sim->cond_dongles, &coder->sim->mutex_dongles, &ts);
-		if (simulation_stopped(coder))
+		if (simulation_stopped(coder->sim))
 		{
 			pthread_mutex_unlock(&coder->sim->mutex_dongles);
 			return (0);

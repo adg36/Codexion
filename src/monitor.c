@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:35:34 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/02 15:10:17 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 15:26:53 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	*monitor(void *arg)
 	sim = (t_program *)arg;
 	pthread_mutex_lock(&sim->mutex_monitor);
 	nearest_burnout = find_nearest_burnout(sim);
-	while (!sim->stop_simulation && !all_compiles_completed(sim))
+	while (!simulation_stopped(sim) && !all_compiles_completed(sim))
 	{
 		wait_until_burnout(sim, nearest_burnout);
 		if (burnout_detected(sim) || all_compiles_completed(sim))

@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/02 14:41:00 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 15:26:11 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void			print_logs(struct timeval start, t_coder *coder, char *message);
 // simulation
 int				init_program(t_settings *settings, t_program *simulation);
 void			stop_simulation(t_program *simulation);
-int				simulation_stopped(t_coder *coder);
+int				simulation_stopped(t_program *simulation);
 
 // time
 long			get_timestamp(struct timeval start);
