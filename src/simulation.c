@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/02 14:19:17 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/03 15:25:53 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 15:46:26 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,19 @@ int	simulation_stopped(t_program *simulation)
 	stop = simulation->stop_simulation;
 	pthread_mutex_unlock(&simulation->mutex_sim);
 	return (stop);
+}
+
+int	wait_for_dongles(struct timeval start, t_coder *coder)
+{
+	long			remaining_ms1;
+	long			remaining_ms2;
+	struct timespec	ts;
+
+	remaining_ms1 = coder->first_dongle->began_cooldown
+		+ coder->sim->settings.dongle_cooldown - get_timestamp(start);
+	remaining_ms2 = coder->second_dongle->began_cooldown
+		+ coder->sim->settings.dongle_cooldown - get_timestamp(start);
+	ts = build_deadline(later_deadline(remaining_ms1, remaining_ms2));
+	return (pthread_cond_timedwait(&coder->sim->cond_dongles,
+				&coder->sim->mutex_dongles, &ts));
 }

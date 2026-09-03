@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 15:14:10 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/03 15:25:18 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 15:46:09 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,21 +36,11 @@ int	dongles_are_unavailable(struct timeval start, t_coder *coder)
 
 int	get_dongles(struct timeval start, t_coder *coder)
 {
-	long			time_in_ms;
-	long			remaining_ms;
-	int				rc;
-	struct timespec	ts;
-
 	pthread_mutex_lock(&coder->sim->mutex_dongles);
 	enqueue(coder);
 	while (dongles_are_unavailable(start, coder) || !has_priority(coder))
 	{
-		time_in_ms = get_timestamp(start);
-		remaining_ms = coder->first_dongle->began_cooldown
-			+ coder->sim->settings.dongle_cooldown - time_in_ms;
-		ts = build_deadline(remaining_ms);
-		rc = pthread_cond_timedwait(
-				&coder->sim->cond_dongles, &coder->sim->mutex_dongles, &ts);
+		wait_for_dongles(start, coder);
 		if (simulation_stopped(coder->sim))
 		{
 			pthread_mutex_unlock(&coder->sim->mutex_dongles);
@@ -59,7 +49,6 @@ int	get_dongles(struct timeval start, t_coder *coder)
 	}
 	assign_dongles(coder);
 	pthread_mutex_unlock(&coder->sim->mutex_dongles);
-	(void)rc;
 	return (1);
 }
 

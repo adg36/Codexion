@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 13:48:39 by razevedo          #+#    #+#             */
-/*   Updated: 2026/08/25 14:03:08 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 15:36:36 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,4 +42,11 @@ struct timespec	build_deadline(long remaining_ms)
 	ts.tv_nsec = nsec % 1000000000;
 	ts.tv_sec += nsec / 1000000000;
 	return (ts);
+}
+
+long	later_deadline(long deadline1, long deadline2)
+{
+	if (deadline1 > deadline2)
+		return (deadline1);
+	return (deadline2);
 }

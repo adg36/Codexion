@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/03 15:26:11 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 15:46:18 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,10 +116,12 @@ void			print_logs(struct timeval start, t_coder *coder, char *message);
 int				init_program(t_settings *settings, t_program *simulation);
 void			stop_simulation(t_program *simulation);
 int				simulation_stopped(t_program *simulation);
+int				wait_for_dongles(struct timeval start, t_coder *coder);
 
 // time
 long			get_timestamp(struct timeval start);
 struct timespec	build_deadline(long remaining_ms);
+long			later_deadline(long deadline1, long deadline2);
 
 // dongles
 int				dongle_is_unavailable(struct timeval start,
