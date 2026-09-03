@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/02 13:54:52 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 16:02:55 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,17 @@ void	init_queues(t_settings *settings, t_dongle *dongles)
 	while (i < settings->number_of_coders)
 	{
 		dongles[i].queue = create_queue(QUEUE_CAPACITY);
+		if (!dongles[i].queue)
+		{
+			i--;
+			while (i >= 0)
+			{
+				free(dongles[i].queue);
+				i--;
+			}
+			printf("Error: failed to create queue.\n");
+			return ;
+		}
 		i++;
 	}
 }

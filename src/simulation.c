@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/02 14:19:17 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/03 15:46:26 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/03 16:02:23 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,5 @@ int	wait_for_dongles(struct timeval start, t_coder *coder)
 		+ coder->sim->settings.dongle_cooldown - get_timestamp(start);
 	ts = build_deadline(later_deadline(remaining_ms1, remaining_ms2));
 	return (pthread_cond_timedwait(&coder->sim->cond_dongles,
-				&coder->sim->mutex_dongles, &ts));
+			&coder->sim->mutex_dongles, &ts));
 }
