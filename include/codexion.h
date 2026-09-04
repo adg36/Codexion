@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/03 16:03:06 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/04 09:09:26 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,8 @@ int				init_program(t_settings *settings, t_program *simulation);
 void			stop_simulation(t_program *simulation);
 int				simulation_stopped(t_program *simulation);
 int				wait_for_dongles(struct timeval start, t_coder *coder);
+long			get_remaining_ms(struct timeval start,
+					t_coder *coder, t_dongle *dongle);
 
 // time
 long			get_timestamp(struct timeval start);
