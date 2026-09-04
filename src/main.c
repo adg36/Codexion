@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/04 14:26:36 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/04 14:44:57 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,7 @@ int	create_threads(t_settings *settings, t_program *simulation)
 	}
 	if (pthread_create(
 			&simulation->monitor, NULL, monitor, (void *) simulation) != 0)
-	{
-		stop_simulation(simulation);
-		return (1);
-	}
+		return (stop_simulation(simulation), 1);
 	simulation->monitor_created = 1;
 	return (0);
 }
