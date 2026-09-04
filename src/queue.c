@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/26 11:48:53 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/04 09:14:56 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/04 14:00:38 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_queue	*create_queue(int capacity)
 	}
 	queue->size = 0;
 	queue->capacity = capacity;
-	queue->arr = malloc(capacity * sizeof(int));
+	queue->arr = malloc(sizeof(int) * capacity);
 	if (!queue->arr)
 	{
 		free(queue);

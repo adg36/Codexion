@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:52:49 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/02 14:20:47 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/04 14:26:36 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,14 @@ int	main(int argc, char **argv)
 		return (fprintf(stderr, "Error: invalid arguments.\n"), 1);
 	init_settings(&settings, args);
 	if (init_program(&settings, &simulation))
-	{
-		clean_up(&settings, &simulation);
 		return (fprintf(stderr, "Error initializing the simulation.\n"), 1);
-	}
 	if (create_threads(&settings, &simulation))
 	{
-		join_threads(&settings, &simulation);
+		join_threads(&simulation);
+		clean_up(&settings, &simulation);
 		return (fprintf(stderr, "Error: failed to create threads.\n"), 1);
 	}
-	join_threads(&settings, &simulation);
+	join_threads(&simulation);
 	clean_up(&settings, &simulation);
 	return (0);
 }
@@ -53,24 +51,28 @@ int	create_threads(t_settings *settings, t_program *simulation)
 		if (pthread_create(&simulation->threads[i], NULL,
 				routine, (void *) &simulation->coders[i]) != 0)
 		{
-			settings->number_of_coders = i;
+			simulation->threads_created = i;
 			return (1);
 		}
 		i++;
+		simulation->threads_created++;
 	}
 	if (pthread_create(
 			&simulation->monitor, NULL, monitor, (void *) simulation) != 0)
+	{
+		stop_simulation(simulation);
 		return (1);
+	}
 	simulation->monitor_created = 1;
 	return (0);
 }
 
-void	join_threads(t_settings *settings, t_program *simulation)
+void	join_threads(t_program *simulation)
 {
 	int	i;
 
 	i = 0;
-	while (i < settings->number_of_coders)
+	while (i < simulation->threads_created)
 	{
 		pthread_join(simulation->threads[i], NULL);
 		i++;

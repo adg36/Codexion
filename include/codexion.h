@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 08:53:19 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/04 09:09:26 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/04 14:13:22 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ typedef struct s_program
 	int				stop_simulation;
 	struct timeval	start;
 	t_coder			*coders;
+	int				threads_created;
 	int				monitor_created;
 }	t_program;
 
@@ -91,7 +92,7 @@ int				has_invalid_scheduler(char *str);
 
 // main
 int				create_threads(t_settings *settings, t_program *simulation);
-void			join_threads(t_settings *settings, t_program *simulation);
+void			join_threads(t_program *simulation);
 void			free_queues(t_settings *settings, t_dongle *dongles);
 void			clean_up(t_settings *settings, t_program *simulation);
 
@@ -104,7 +105,7 @@ t_dongle		*init_dongles(t_settings *settings);
 void			init_sim(
 					t_program *sim, t_settings *settings,
 					t_coder *coders, t_dongle *dongles);
-void			init_queues(t_settings *settings, t_dongle *dongles);
+int				init_queues(t_settings *settings, t_dongle *dongles);
 
 // routine
 void			*routine(void *data);

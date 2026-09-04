@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/02 14:19:17 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/04 09:21:10 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/04 14:23:33 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,15 @@ int	init_program(t_settings *settings, t_program *simulation)
 	coders = init_coders(coders, settings, simulation, dongles);
 	if (!coders)
 	{
-		free(simulation->dongles);
+		free(dongles);
 		return (fprintf(stderr, "Error: failed to create coders.\n"), 1);
 	}
-	init_queues(settings, dongles);
+	if (init_queues(settings, dongles))
+	{
+		free(coders);
+		free(dongles);
+		return (fprintf(stderr, "Error: failed to create queues.\n"), 1);
+	}
 	init_sim(simulation, settings, coders, dongles);
 	init_mutex_cond(simulation);
 	pre_enqueue(simulation);

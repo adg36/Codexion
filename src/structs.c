@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 10:19:28 by razevedo          #+#    #+#             */
-/*   Updated: 2026/09/04 09:01:32 by razevedo         ###   ########.fr       */
+/*   Updated: 2026/09/04 14:28:48 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,11 @@ void	init_sim(t_program *sim, t_settings *settings,
 	sim->coders = coders;
 	sim->dongles = dongles;
 	sim->stop_simulation = 0;
+	sim->threads_created = 0;
 	sim->monitor_created = 0;
 }
 
-void	init_queues(t_settings *settings, t_dongle *dongles)
+int	init_queues(t_settings *settings, t_dongle *dongles)
 {
 	int	i;
 
@@ -93,12 +94,14 @@ void	init_queues(t_settings *settings, t_dongle *dongles)
 			i--;
 			while (i >= 0)
 			{
+				free(dongles[i].queue->arr);
 				free(dongles[i].queue);
 				i--;
 			}
 			printf("Error: failed to create queue.\n");
-			return ;
+			return (1);
 		}
 		i++;
 	}
+	return (0);
 }
