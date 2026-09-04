@@ -21,12 +21,8 @@ Dongles also have a cooldown period after being released. During this period the
 
 The simulation supports two scheduling policies:
 
-- **FIFO (First In, First Out):** coders are granted access according to the order in which they requested the dongles.
-- **EDF (Earliest Deadline First):** coders are prioritised according to the deadline of their next required compilation. The deadline is calculated as:
-
-  `last_compile_start + time_to_burnout`
-
-  When two coders have the same deadline, a deterministic tie-breaking mechanism is used.
+- **FIFO (First In, First Out):** each dongle maintains a queue of waiting coders, and a coder is granted access only when it has priority in both of its required dongle queues. This preserves the FIFO ordering of competing requests for each dongle.
+- **EDF (Earliest Deadline First):** each dongle maintains a queue ordered by the deadlines of waiting coders. A coder can proceed only when it has priority in both of its required dongle queues. Equal deadlines are resolved using a deterministic tie-breaking mechanism.
 
 The simulation terminates when either:
 
@@ -94,8 +90,7 @@ The project was implemented using the following resources:
 - `pthread_cond_timedwait` for waiting until coder deadlines or other relevant events
 - `gettimeofday` for simulation timing
 - Standard C memory management (`malloc`, `free`)
-- Custom queues for FIFO and EDF arbitration
-- A custom priority mechanism for EDF scheduling
+- Custom queue-based arbitration for FIFO and EDF scheduling
 
 ### Testing and debugging
 
@@ -123,29 +118,24 @@ AI was used as a learning and debugging aid throughout the project. It was mainl
 - discuss and reason about the project architecture and synchronization strategy before and during implementation;
 - analyse compiler, Valgrind, Helgrind, DRD and TSan output and help identify possible sources of errors;
 - investigate edge cases and design additional stress tests for the FIFO and EDF schedulers;
-- review specific pieces of code for possible race conditions, dadlocks, missed wake-ups and resource-management issues;
+- review specific pieces of code for possible race conditions, deadlocks, missed wake-ups and resource-management issues;
 - help interpret unexpected behaviour and compare possible implementation approaches;
 - assist with documentation, including the structure and wording of this README.
 
-The architecture and the implementation itself are my own. No Copilot was used.
+The architecture and implementation were developed by me. AI was used for conceptual explanations, debugging discussions, analysis of tool output, and review of specific implementation choices. It was not used to generate code or to provide a ready-made solution.
 
-### Known issue
+### Helgrind note
 
 ## Helgrind warning with `pthread_cond_timedwait`
 
-When running the program with Helgrind, the following warning may be reported:
+When running the program with Helgrind, a small number of runs may report a warning related to `pthread_cond_signal`/`pthread_cond_broadcast()` and the associated mutex.
 
-`Thread #X: pthread_cond_{signal,broadcast}: associated lock is not held by calling thread`
+The condition variables in the program follow the standard POSIX pattern: shared state is checked while holding the associated mutex, and `pthread_cond_timedwait()` is called with that mutex. Signalling/broadcasting is performed according to the synchronization requirements of the corresponding shared state.
 
-The warning originates from the internal execution of `pthread_cond_timedwait()` rather than from an explicit `pthread_cond_signal()` or `pthread_cond_broadcast()` call in the program.
+The warning appears intermittently and has not been reproduced as a data race or synchronization error by ThreadSanitizer or DRD. The program also passes the project's functional and stress tests.
 
-The condition variables used by the program follow the standard POSIX pattern: the associated mutex is locked while checking/updating the condition and while signalling or broadcasting, and the same mutex is passed to `pthread_cond_timedwait()`.
-
-This warning is believed to be a Helgrind false positive. The official Valgrind documentation notes that Helgrind only partially handles POSIX condition variables and explicitly documents cases where this can result in false-positive reports:
-	“Helgrind only partially correctly handles POSIX condition variables.”
-
-It further states that missing synchronisation events can cause Helgrind to report false positives.
-Reference: Valgrind Helgrind Manual — Hints and Tips for Effective Use of Helgrind
+Helgrind's own documentation notes that its handling of POSIX condition variables is only partial and that this can result in false-positive reports when synchronization events are not visible to its analysis.
+Reference: https://valgrind.org/docs/manual/hg-manual.html/cl-manual.html?utm_source=chatgpt.com
 
 ---
 
@@ -162,31 +152,21 @@ A coder waits when either of its required dongles:
 
 Coders do not proceed until both required dongles are available and the coder has priority.
 
-### 2. Competing requests
+### 2. Arbitration
 
-Multiple coders may request the same dongle concurrently. Each dongle maintains a queue of waiting coders.
+Each dongle maintains a queue of coders waiting to use it. Because each coder requires two adjacent dongles, a request is granted only when the coder has priority in both relevant queues and both dongles are currently available.
 
-The scheduler determines which waiting coder has priority.
+Under FIFO, requests are ordered by arrival. Under EDF, requests are ordered by their compilation deadlines. When EDF deadlines are equal, a deterministic tie-breaking mechanism is used to prevent the ordering from depending solely on thread scheduling.
 
-For FIFO scheduling, the coder whose request arrived first is prioritised.
+Once a coder is granted both dongles, they are assigned together before the coder begins compiling.
 
-For EDF scheduling, the coder with the earliest compilation deadline is prioritised.
-
-### 3. Waiting for both dongles
-
-A coder must acquire both of its required dongles before compiling. It either acquires both dongles or none. It cannot grab only one dongle.
-
-The arbitration mechanism therefore checks the coder's position in the queues of both required dongles before granting access.
-
-This prevents a coder from holding one dongle indefinitely while waiting for the other.
-
-### 4. Dongle cooldown
+### 3. Dongle cooldown
 
 After a coder releases its dongles, each dongle remains unavailable until its cooldown expires.
 
 Waiting coders use a timed condition-variable wait so that they can be woken either when the relevant state changes or when the cooldown/deadline needs to be reconsidered.
 
-### 5. Coder burnout
+### 4. Coder burnout
 
 A dedicated monitor thread calculates the next coder deadline and waits until the relevant deadline.
 
@@ -197,13 +177,13 @@ When a deadline is exceeded, the monitor:
 3. stops the simulation;
 4. wakes coders waiting for dongles.
 
-### 6. Simulation completion
+### 5. Simulation completion
 
 The simulation also stops when every coder has completed the required number of compilations.
 
 The monitor checks this condition alongside burnout detection so that the simulation can terminate cleanly without waiting for another burnout deadline.
 
-### 7. Thread creation failure
+### 6. Thread creation failure
 
 Thread creation errors are handled explicitly.
 
@@ -224,9 +204,8 @@ Separate mutexes are used for different categories of shared state:
 - `mutex_dongles` protects dongle state and the associated waiting queues.
 - `mutex_print` serializes log output so that messages from different threads cannot overlap.
 - `mutex_compiles` protects compilation-related coder state, including compilation counters and compilation timestamps.
-- `mutex_sim` protects global simulation state such as the stop flag.
+- `mutex_sim` protects shares simulation state such as the stop flag.
 - `mutex_monitor` protects the monitor's condition-variable waiting operation.
-- `mutex_monitor` / monitor-related state is kept separate from the mutexes used by coder threads to avoid unnecessarily coupling unrelated operations.
 
 Using separate mutexes limits contention and makes the ownership of shared state explicit.
 
